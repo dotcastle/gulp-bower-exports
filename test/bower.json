@@ -1,0 +1,21 @@
+{
+	"name": "ASP.NET",
+	"private": true,
+	"dependencies": {
+		"angular": "^1.4.6",
+		"angular-animate": "^1.4.6",
+		"angular-aria": "^1.4.6",
+		"angular-cookies": "^1.4.6",
+		"angular-message-format": "^1.4.6",
+		"angular-messages": "^1.4.6",
+		"angular-resource": "^1.4.6",
+		"angular-route": "^1.4.6",
+		"angular-sanitize": "^1.4.6",
+		"angular-touch": "^1.4.6",
+		"angular-latest": "^1.4.6",
+		"angular-ui-router": "^0.2.15",
+		"animate-css": "^3.4.0",
+		"autosize": "^3.0.12",
+		"bootstrap-sass": "^3.3.5"
+	}
+}

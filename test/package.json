@@ -1,0 +1,15 @@
+{
+	"version": "1.0.0",
+	"name": "ASP.NET",
+	"private": true,
+	"devDependencies": {
+		"gulp-util": "^3.0.6",
+		"linq": "^3.0.5",
+		"vinyl": "^1.0.0",
+		"vinyl-fs": "^2.0.0",
+		"gulp": "^3.9.0",
+		"gulp-debug": "^2.1.0",
+		"node-path": "^0.0.3",
+		"q": "^1.4.1"
+	}
+}

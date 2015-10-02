@@ -1,0 +1,429 @@
+﻿{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "http://dotcastle.com/schemas/gulp-bower-exports",
+	"name": "/",
+
+	"type": "object",
+	"additionalProperties": true,
+
+	"title": "Bower Exports Schema",
+	"description": "JSON schema for the exports section for the gulp-bower-exports plugin",
+
+	"definitions": {
+		"strings": {
+			"title": "Strings",
+			"description": "Allows one or more strings",
+			"anyOf": [
+				{ "type": "string" },
+				{
+					"type": "array",
+					"additionalItems": true,
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": { "type": "string" }
+				}
+			]
+		},
+
+		"nonEmptyString": {
+			"type": "string",
+			"title": "Non-empty string",
+			"description": "String which should contain at least one non-space character",
+			"pattern": "^(?!\\s*$).+"
+		},
+
+		"nonEmptyStrings": {
+			"title": "Non-empty strings",
+			"description": "Allows one or more non-empty strings",
+			"anyOf": [
+				{ "$ref": "#/definitions/nonEmptyString" },
+				{
+					"type": "array",
+					"additionalItems": true,
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": { "$ref": "#/definitions/nonEmptyString" }
+				}
+			]
+		},
+
+		"nonEmptyStringWithoutComma": {
+			"type": "string",
+			"title": "Non-empty string",
+			"description": "String which should contain at least one non-space character",
+			"pattern": "^(?!\\s*(,|$))[^,]+$"
+		},
+
+		"nonEmptyStringsWithoutComma": {
+			"type": "string",
+			"title": "Non-empty strings without a comma",
+			"description": "String which should contain at least one non-space character",
+			"pattern": "^(?!\\s*(,|$))[^,]+(\\s*,\\s*(?!\\s*(,|$))[^,]+)*$"
+		},
+
+		"elementId": {
+			"type": "string",
+			"title": "Element Id",
+			"description": "Id for an element is used to identify it from other elements",
+			"pattern": "^[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
+		},
+
+		"elementIds": {
+			"type": "string",
+			"title": "Element Ids",
+			"description": "Multiple Id for an element is used to identify it from other elements",
+			"pattern": "^([a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])(\\s*,\\s*[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
+		},
+
+		"elementIdRef": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^#[a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
+		},
+
+		"elementIdRefs": {
+			"type": "string",
+			"title": "Element Id References",
+			"description": "References to id for an element",
+			"pattern": "^(#[a-zA-Z0-9\\-]*[a-zA-Z0-9])(\\s*,\\s*#[a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
+		},
+
+		"nonElementIdRef": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^[^#].*$"
+		},
+
+		"nonElementIdRefWithoutComma": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^[^#][^,]*$"
+		},
+
+		"elementIdRefOrNonElementIdRefWithoutComma": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*))$"
+		},
+
+		"elementIdRefOrNonElementIdRefWithoutCommas": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*))(\\s*,\\s*((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*)))$"
+		},
+
+		"source": {
+			"type": "string",
+			"title": "Source glob",
+			"description": "Specifies exactly one source glob pattern",
+			"pattern": "^((#main#)|(((?!#main#)[^,])+))$"
+		},
+
+		"sources": {
+			"type": "string",
+			"title": "Source globs",
+			"description": "One or more source glob patterns",
+			"pattern": "^((#main#)|(((?!#main#)[^,])+))(\\s*,\\s*((#main#)|(((?!#main#)[^,])+)))*$"
+		},
+
+		"elementIdRefOrSource": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+)))$"
+		},
+
+		"elementIdRefOrSources": {
+			"type": "string",
+			"title": "Element Id Reference",
+			"description": "Reference to id for an element",
+			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+)))(\\s*,\\s*((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+))))*$"
+		},
+
+		"hierarchyAdjustmentMode": {
+			"title": "Hierarchy mode",
+			"description": "Adjusts the hierarchy of the target files. Minimal will reduce the hierarchy depth to lowest possible extent. Flatten will remove hierarchy and copies all files to the target location (Warning: This may cause some files to be overwritten).",
+			"enum": [ "minimized", "flattened" ]
+		},
+
+		"sourceRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Source Rule",
+			"description": "Selects source files for processing",
+
+			"properties": {
+				"type": { "type": "string", "default": "source", "enum": ["source"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"src": { "$ref": "#/definitions/sources" }
+			},
+
+			"required": ["type", "id", "src"]
+		},
+
+		"filterRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Name Filter Rule",
+			"description": "Filters source files for further processing",
+
+			"properties": {
+				"type": { "type": "string", "default": "filter", "enum": ["filter"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"fullnameLike": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Full name match",
+					"description": "Matches the file's full name (full relative path). Can be a normal string or a regex expression"
+				},
+				"dirnameLike": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Directory name match",
+					"description": "Matches the file's relative directory name. Can be a normal string or a regex expression"
+				},
+				"filenameLike": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "File name match",
+					"description": "Matches the file's file name (base name and extension). Can be a normal string or a regex expression"
+				},
+				"basenameLike": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Base name match",
+					"description": "Matches the file's base name (name without extension). Can be a normal string or a regex expression"
+				},
+				"extnameLike": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Extension name match",
+					"description": "Matches the file's full name (extension name including leading period). Can be a normal string or a regex expression"
+				}
+			},
+
+			"anyOf": [
+				{ "required": [ "type", "id", "fullnameLike" ] },
+				{ "required": [ "type", "id", "dirnameLike" ] },
+				{ "required": [ "type", "id", "filenameLike" ] },
+				{ "required": [ "type", "id", "basenameLike" ] },
+				{ "required": [ "type", "id", "extnameLike" ] }
+			]
+		},
+
+		"renameRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "File Name Replacement",
+			"description": "Specifies criteria to replace one or more parts of the file name",
+
+			"properties": {
+				"type": { "type": "string", "default": "rename", "enum": ["rename"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"replace": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Search expression",
+					"description": "Phrase or regex pattern to search in the file name"
+				},
+				"in": {
+					"type": "string",
+					"title": "Name part type",
+					"description": "Type of the file name part to replace in",
+					"enum": ["fullname", "dirname", "filename", "basename", "extname"]
+				},
+				"with": {
+					"type": "string",
+					"title": "Replace expression",
+					"description": "Phrase or regex replacement string to replace with"
+				}
+			},
+
+			"required": ["type", "id", "with"]
+		},
+
+		"replaceContentRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "File Content Replacement",
+			"description": "Specifies criteria to replace contents of a file",
+
+			"properties": {
+				"type": { "type": "string", "default": "replaceContent", "enum": ["replaceContent"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"replace": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Search expression",
+					"description": "Phrase or regex pattern to search in the file content"
+				},
+				"with": {
+					"type": "string",
+					"title": "Replace expression",
+					"description": "Phrase or regex replacement string to replace with"
+				}
+			},
+
+			"required": ["type", "id", "with"]
+		},
+
+		"moveRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Move Rule",
+			"description": "Specifies criteria to relocate the files to a different location relative to the dest directory",
+
+			"properties": {
+				"type": { "type": "string", "default": "move", "enum": ["move"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"withHierarchy": { "$ref": "#/definitions/hierarchyAdjustmentMode" },
+				"to": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Target location",
+					"description": "An absolute or a relative (wrt dest directory) directory to which to move the source files"
+				}
+			},
+
+			"required": ["type", "id", "to"]
+		},
+
+		"checkChangesRule": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Check Changes Rule",
+			"description": "Specifies criteria to check if the source files changed compared to the detination files. These options are passed to the gulp-changed plugin.",
+
+			"properties": {
+				"type": { "type": "string", "default": "move", "enum": ["checkChanges"] },
+				"id": { "$ref": "#/definitions/elementId" },
+				"extension": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Extension",
+					"description": "Extension of the destination files."
+				},
+
+				"hasChanged": {
+					"$ref": "#/definitions/nonEmptyString",
+					"title": "Has Changed",
+					"description": "Function that determines whether the source file is different from the destination file."
+				}
+			}
+		},
+
+		"rule": {
+			"anyOf": [
+				{ "$ref": "#/definitions/sourceRule" },
+				{ "$ref": "#/definitions/filterRule" },
+				{ "$ref": "#/definitions/renameRule" },
+				{ "$ref": "#/definitions/replaceContentRule" },
+				{ "$ref": "#/definitions/moveRule" },
+				{ "$ref": "#/definitions/checkChangesRule" }
+			]
+		},
+
+		"export": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": " Export",
+			"description": "Export directive which is executed as a primary action",
+
+			"properties": {
+				"name": { "$ref": "#/definitions/nonEmptyString" },
+
+				"from": {
+					"$ref": "#/definitions/nonEmptyStringsWithoutComma",
+					"title": "Packages",
+					"description": "Comma separated names of packages with which this export rule is associated"
+				},
+
+				"select": {
+					"$ref": "#/definitions/elementIdRefOrSources",
+					"title": "Source Id",
+					"description": "Id of the source rule element"
+				},
+
+				"filter": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Name Filter Ids",
+					"description": "Comma separated id(s) of filter rule elements"
+				},
+
+				"rename": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Rename Ids",
+					"description": "Comma separated id(s) of rename rule elements"
+				},
+
+				"replaceContent": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Replace Content Ids",
+					"description": "Comma separated id(s) of replace content rule elements"
+				},
+
+				"overridingMovePackageName": {
+					"type": "string",
+					"title": "Override Package Name",
+					"description": "Use this package in the place of '#package#' token instead of the actual package name"
+				},
+
+				"move": {
+					"title": "Move Id",
+					"description": "Id of move rule element",
+					"anyOf": [
+						{ "$ref": "#/definitions/elementIdRef" },
+						{ "$ref": "#/definitions/nonEmptyString" }
+					]
+				},
+
+				"withHierarchy": { "$ref": "#/definitions/hierarchyAdjustmentMode" },
+
+				"ifChanged": {
+					"$ref": "#/definitions/elementIdRefs",
+					"title": "Changed Id(s)",
+					"description": "Id of changed rule element"
+				}
+			},
+
+			"required": ["from", "select"]
+		}
+	},
+
+	"properties": {
+		"rules": {
+			"title": "Rules repository",
+			"description": "Contains a set of rules to be used by the exports directives",
+			"anyOf": [
+				{ "$ref": "#/definitions/rule" },
+				{
+					"type": "array",
+					"additionalItems": true,
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": { "$ref": "#/definitions/rule" }
+				}
+			]
+		},
+
+		"exports": {
+			"title": "Exports list",
+			"description": "Contains a set of export directives",
+			"anyOf": [
+				{ "$ref": "#/definitions/export" },
+				{
+					"type": "array",
+					"additionalItems": true,
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": { "$ref": "#/definitions/export" }
+				}
+			]
+		}
+	},
+
+	"required": ["rules", "exports"]
+}

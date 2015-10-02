@@ -214,6 +214,7 @@ ModelManifest.xml
 # Custom Ignores
 *.map
 *.js
+*.lock.json
 /vs/test
 /bower_components
 /test/wwwroot/**/*.*

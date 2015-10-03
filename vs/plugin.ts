@@ -353,13 +353,8 @@ abstract class Utils {
 		var regex = /\{[^\}]+\}/g;
 		if (Utils.testRegExp(regex, src)) {
 			src = src.replace(regex, m => {
-				var replacedM = Utils.replaceBracedGlobPatterns(m);
-				var parts = replacedM.split(',');
-				if (parts.length === 0) {
-					return '';
-				} else if (parts.length === 1) {
-					return parts[0];
-				}
+				var innerContent = Utils.replaceBracedGlobPatterns(m.substr(1, m.length - 2));
+				var parts = innerContent.split(',');
 				return '@(' + Enumerable.from(parts).toJoinedString('|') + ')';
 			});
 		}

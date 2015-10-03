@@ -342,6 +342,31 @@ abstract class Utils {
 	}
 
 	/**
+	 * Replaces braced patterns in the source glob
+	 * @param src - Source glob
+	 * @returns {string} - Replaced source glob
+	 */
+	public static replaceBracedGlobPatterns(src: string): string {
+		if (!Utils.isType(src, String)) {
+			return src;
+		}
+		var regex = /\{[^\}]+\}/g;
+		if (Utils.testRegExp(regex, src)) {
+			src = src.replace(regex, m => {
+				var replacedM = Utils.replaceBracedGlobPatterns(m);
+				var parts = replacedM.split(',');
+				if (parts.length === 0) {
+					return '';
+				} else if (parts.length === 1) {
+					return parts[0];
+				}
+				return '@(' + Enumerable.from(parts).toJoinedString('|') + ')';
+			});
+		}
+		return src;
+	}
+
+	/**
 	 * Sets file's path
 	 * @param file - File
 	 * @param relativePath - Relative path
@@ -1704,6 +1729,7 @@ class Export {
 		}) || []).distinct().toArray();
 
 		var source: any = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
+		source = Utils.replaceBracedGlobPatterns(source);
 		source = (source || '').split(',');
 		source.push(includeRules.source);
 		source = Enumerable.from(source).distinct().toArray();

@@ -63,28 +63,28 @@
 			"type": "string",
 			"title": "Element Id",
 			"description": "Id for an element is used to identify it from other elements",
-			"pattern": "^[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
+			"pattern": "^(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
 		},
 
 		"elementIds": {
 			"type": "string",
 			"title": "Element Ids",
 			"description": "Multiple Id for an element is used to identify it from other elements",
-			"pattern": "^([a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])(\\s*,\\s*[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
+			"pattern": "^(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9](\\s*,\\s*(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
 		},
 
 		"elementIdRef": {
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^#[a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
+			"pattern": "^#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9]$"
 		},
 
 		"elementIdRefs": {
 			"type": "string",
 			"title": "Element Id References",
 			"description": "References to id for an element",
-			"pattern": "^(#[a-zA-Z0-9\\-]*[a-zA-Z0-9])(\\s*,\\s*#[a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
+			"pattern": "^#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9](\\s*,\\s*#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])*$"
 		},
 
 		"nonElementIdRef": {
@@ -98,21 +98,21 @@
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^[^#][^,]*$"
+			"pattern": "^[^#,][^,]*$"
 		},
 
 		"elementIdRefOrNonElementIdRefWithoutComma": {
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*))$"
+			"pattern": "^((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#,][^,]*))$"
 		},
 
 		"elementIdRefOrNonElementIdRefWithoutCommas": {
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*))(\\s*,\\s*((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#][^,]*)))$"
+			"pattern": "^((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#,][^,]*))(\\s*,\\s*((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|([^#,][^,]*)))*$"
 		},
 
 		"source": {
@@ -133,14 +133,14 @@
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+)))$"
+			"pattern": "^((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|(((#main#)|(((?!#main#)[^,])+))))$"
 		},
 
 		"elementIdRefOrSources": {
 			"type": "string",
 			"title": "Element Id Reference",
 			"description": "Reference to id for an element",
-			"pattern": "^((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+)))(\\s*,\\s*((#[a-zA-Z0-9\\-]*[a-zA-Z0-9])|((#main#)|(((?!#main#)[^,])+))))*$"
+			"pattern": "^((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|(((#main#)|(((?!#main#)[^,])+))))(((#(?!-)[a-zA-Z0-9\\-]*[a-zA-Z0-9])|(\\s*,\\s*((#main#)|(((?!#main#)[^,])+)))))*$"
 		},
 
 		"hierarchyAdjustmentMode": {

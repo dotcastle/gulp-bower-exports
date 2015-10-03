@@ -19,6 +19,7 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 	- Move - Specify target locations to move the files
 	- Check Changes - Filter out unchanged files (gulp-changed)
 3. Export tasks composed using the inline or defined rules
+4. JSON schema to help in editing the export configuration file
 
 ## Install ##
     $ npm install --save-dev gulp-bower-exports

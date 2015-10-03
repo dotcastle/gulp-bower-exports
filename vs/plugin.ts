@@ -1557,11 +1557,19 @@ class MoveRule {
 	private transformObjects(transform: stream.Transform, file: File, encoding: string, context: IExecutionContext): Q.Promise<any> {
 		if (!file.isDirectory()) {
 			if (this.hierarchyAdjustment === HierarchyAdjustment.None) {
-				let to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+				let to = this.plugin.replacePackageToken(this.to,
+					(context.exportInstance.overridingMovePackageName !== null)
+						? context.exportInstance.overridingMovePackageName
+						: context.packageName,
+					true);
 				Utils.setFilePath(file, path.join(to, file.relative));
 				transform.push(file);
 			} else if (this.hierarchyAdjustment === HierarchyAdjustment.Flattened) {
-				let to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+				let to = this.plugin.replacePackageToken(this.to,
+					(context.exportInstance.overridingMovePackageName !== null)
+						? context.exportInstance.overridingMovePackageName
+						: context.packageName,
+					true);
 				Utils.setFilePath(file, path.join(to, path.basename(file.relative)));
 				transform.push(file);
 			} else {
@@ -1590,7 +1598,11 @@ class MoveRule {
 			.forEach(f => Utils.removeCommonPathSegment(f, commonPathSegment));
 
 		// Move to
-		var to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+		var to = this.plugin.replacePackageToken(this.to,
+			(context.exportInstance.overridingMovePackageName !== null)
+				? context.exportInstance.overridingMovePackageName
+				: context.packageName,
+			true);
 		Enumerable.from(context.moveFiles)
 			.forEach(f => Utils.setFilePath(f, path.join(to, f.relative)));
 

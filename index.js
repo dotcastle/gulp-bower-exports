@@ -1434,12 +1434,16 @@ var MoveRule = (function () {
     MoveRule.prototype.transformObjects = function (transform, file, encoding, context) {
         if (!file.isDirectory()) {
             if (this.hierarchyAdjustment === HierarchyAdjustment.None) {
-                var to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+                var to = this.plugin.replacePackageToken(this.to, (context.exportInstance.overridingMovePackageName !== null)
+                    ? context.exportInstance.overridingMovePackageName
+                    : context.packageName, true);
                 Utils.setFilePath(file, path.join(to, file.relative));
                 transform.push(file);
             }
             else if (this.hierarchyAdjustment === HierarchyAdjustment.Flattened) {
-                var to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+                var to = this.plugin.replacePackageToken(this.to, (context.exportInstance.overridingMovePackageName !== null)
+                    ? context.exportInstance.overridingMovePackageName
+                    : context.packageName, true);
                 Utils.setFilePath(file, path.join(to, path.basename(file.relative)));
                 transform.push(file);
             }
@@ -1464,7 +1468,9 @@ var MoveRule = (function () {
         Enumerable.from(context.moveFiles)
             .forEach(function (f) { return Utils.removeCommonPathSegment(f, commonPathSegment); });
         // Move to
-        var to = this.plugin.replacePackageToken(this.to, context.exportInstance.overridingMovePackageName, true);
+        var to = this.plugin.replacePackageToken(this.to, (context.exportInstance.overridingMovePackageName !== null)
+            ? context.exportInstance.overridingMovePackageName
+            : context.packageName, true);
         Enumerable.from(context.moveFiles)
             .forEach(function (f) { return Utils.setFilePath(f, path.join(to, f.relative)); });
         // Now write the files

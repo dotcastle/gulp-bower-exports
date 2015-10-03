@@ -614,6 +614,17 @@ abstract class Utils {
 	}
 
 	/**
+	 * Creates a plugin error instance
+	 */
+	public static pluginError(err: any): PluginError {
+		err = err || new Error('An unknown error has occurred');
+		return (err instanceof PluginError) ? err : new PluginError(BowerExportsPlugin.PluginName, <Error>err, {
+			showStack: DEBUG,
+			showProperties: DEBUG
+		});
+	}
+
+	/**
 	 * Creates a transform
 	 */
 	public static createTransform(transformMethod: (transform: stream.Transform, file: File, encoding: string, data?: any) => Q.Promise<any>,
@@ -629,16 +640,20 @@ abstract class Utils {
 
 		// https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
 		transformOptions.transform = (file: File, encoding: string, callback: (err?: Error, data?: any) => void) => {
-			transformMethod(transformStream, file, encoding, data)
-				.then(() => { callback(); })
-				.catch(e => { callback(e); });
+			try {
+				transformMethod(transformStream, file, encoding, data)
+					.then(() => { callback(); })
+					.catch(e => { callback(Utils.pluginError(e)); });
+			} catch (e) { callback(Utils.pluginError(e)); }
 		};
 
 		if (flushMethod) {
 			transformOptions.flush = (callback: (e?: any) => void) => {
-				flushMethod(transformStream, data)
-					.then(() => callback())
-					.catch(e => callback(e || new Error('An unknown error has occurred')));
+				try {
+					flushMethod(transformStream, data)
+						.then(() => callback())
+						.catch(e => callback(Utils.pluginError(e)));
+				} catch (e) { callback(Utils.pluginError(e)); }
 			};
 		}
 
@@ -2053,7 +2068,6 @@ class BowerExportsPlugin {
 	private exportsStreamFactory(callback: (e: any, stream: NodeJS.ReadableStream) => void): void {
 		if (!this._streamFactoryQueue) {
 			var creator: ((xx: Export, pp: string, ii: number, jj: number) => ReadableStreamCreator) = (xx: Export, pp: string, ii: number, jj: number) => {
-				Utils.log(LogType.Information, 'Processing \'{0}\' - \'{1}\'...', xx.name, pp);
 				return () => xx.createStream(pp);
 			};
 

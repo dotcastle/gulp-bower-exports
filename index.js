@@ -6,6 +6,7 @@ var File = require('vinyl');
 var vinylSrc = require('vinyl-fs');
 var Q = require('q');
 var Enumerable = require('linq');
+var gulp_util_1 = require('gulp-util');
 var string_decoder_1 = require('string_decoder');
 var multistream = require('multistream');
 var gChanged = require('gulp-changed');
@@ -585,6 +586,16 @@ var Utils = (function () {
         return format;
     };
     /**
+     * Creates a plugin error instance
+     */
+    Utils.pluginError = function (err) {
+        err = err || new Error('An unknown error has occurred');
+        return (err instanceof gulp_util_1.PluginError) ? err : new gulp_util_1.PluginError(BowerExportsPlugin.PluginName, err, {
+            showStack: DEBUG,
+            showProperties: DEBUG
+        });
+    };
+    /**
      * Creates a transform
      */
     Utils.createTransform = function (transformMethod, flushMethod, data, transformOptions) {
@@ -595,15 +606,25 @@ var Utils = (function () {
         transformOptions.highWaterMark = BowerExportsPlugin.TransformStreamReadableHighWaterMark;
         // https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
         transformOptions.transform = function (file, encoding, callback) {
-            transformMethod(transformStream, file, encoding, data)
-                .then(function () { callback(); })
-                .catch(function (e) { callback(e); });
+            try {
+                transformMethod(transformStream, file, encoding, data)
+                    .then(function () { callback(); })
+                    .catch(function (e) { callback(Utils.pluginError(e)); });
+            }
+            catch (e) {
+                callback(Utils.pluginError(e));
+            }
         };
         if (flushMethod) {
             transformOptions.flush = function (callback) {
-                flushMethod(transformStream, data)
-                    .then(function () { return callback(); })
-                    .catch(function (e) { return callback(e || new Error('An unknown error has occurred')); });
+                try {
+                    flushMethod(transformStream, data)
+                        .then(function () { return callback(); })
+                        .catch(function (e) { return callback(Utils.pluginError(e)); });
+                }
+                catch (e) {
+                    callback(Utils.pluginError(e));
+                }
             };
         }
         // Primary Bower.json processing transform
@@ -1842,7 +1863,6 @@ var BowerExportsPlugin = (function () {
     BowerExportsPlugin.prototype.exportsStreamFactory = function (callback) {
         if (!this._streamFactoryQueue) {
             var creator = function (xx, pp, ii, jj) {
-                Utils.log(LogType.Information, 'Processing \'{0}\' - \'{1}\'...', xx.name, pp);
                 return function () { return xx.createStream(pp); };
             };
             this._streamFactoryQueue = [];

@@ -1,7 +1,5 @@
 # gulp-bower-exports #
-> Note: This plugin is not yet ready for production. It is not published to npm registry. Use it at your own risk. The first production ready version will be published in few days.
-
-A JSON driven rule based file transfer plugin for Gulp. For detailed information and usage, please visit [gulp-bower-exports](http://www.dotcastle.com/blog "gulp-bower-exports") 
+A JSON driven rule based file transfer plugin for Gulp. For detailed information and usage, please visit [gulp-bower-exports](http://www.dotcastle.com/blog/gulp-bower-exports "gulp-bower-exports") 
 
 When working with web applications, [bower](http://bower.io/ "Bower") is often a preferred choice to maintain client-side dependencies. While bower maintains the dependencies effectively, you do not often need the complete distribution files in your web project. The few required files from each distribution package need to be transferred either manually or by writing tedious scripts to do the task.
 
@@ -39,45 +37,45 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 ### bowerExports(options) ###
 
 #### options.cwd ####
-**Type**: string
-**Required**: false
-**Default**: process.cwd()
-**Description**: Working directory
+**Type**: string  
+**Required**: false  
+**Default**: process.cwd()  
+**Description**: Working directory  
 
 #### options.externalExportsJsonFilePath ####
-**Type**: string
-**Required**: false
-**Default**: null
+**Type**: string  
+**Required**: false  
+**Default**: null  
 **Description**: External json file containing the exports section. If not specified, the exports section is expected to be present in the bower.json file with the property name "bowerExports"
 
 #### options.bowerRcFilePath ####
-**Type**: string
-**Required**: false
-**Default**: <bower.json directory>/.bowerrc
+**Type**: string  
+**Required**: false  
+**Default**: <bower.json directory>/.bowerrc  
 **Description**: Path of the .bowerrc file relative to the bower.json file
 
 #### options.bowerComponentsDirectory ####
-**Type**: string
-**Required**: false
-**Default**: <bower.json directory>/bower_components
+**Type**: string  
+**Required**: false  
+**Default**: <bower.json directory>/bower_components  
 **Description**: Path of the bower_components folder relative to the source file. This setting takes precedence over bowerRcFilePath.
 
 #### options.passThroughSourceFiles ####
-**Type**: boolean
-**Required**: false
-**Default**: false
+**Type**: boolean  
+**Required**: false  
+**Default**: false  
 **Description**: Whether to remove the bower.json file itself from the processing pipe upon successful processing of its contents and adding them to the pipeline
 
 #### options.nonReadableStreamedFiles ####
-**Type**: boolean
-**Required**: false
-**Default**: false
+**Type**: boolean  
+**Required**: false  
+**Default**: false  
 **Description**: Specify this flag to open the source files as non-readable. This option is directly passed to the gulp src method as option 'read'
 
 #### options.checkChangesDestination ####
-**Type**: string
-**Required**: false
-**Default**: null
+**Type**: string  
+**Required**: false  
+**Default**: null  
 **Description**: The destination directory for gulp-changed. Same as you put into gulp.dest(). If not specified, change checking is not enabled.
 
 ## License ##

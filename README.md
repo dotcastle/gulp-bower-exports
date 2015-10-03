@@ -79,4 +79,4 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 **Description**: The destination directory for gulp-changed. Same as you put into gulp.dest(). If not specified, change checking is not enabled.
 
 ## License ##
-GNU GPL v3 © [DotCastle TechnoSolutions Private Limited, INDIA](http://www.dotcastle.com "DotCastle TechnoSolutions Private Limited, INDIA")
+MIT © [DotCastle TechnoSolutions Private Limited, INDIA](http://www.dotcastle.com "DotCastle TechnoSolutions Private Limited, INDIA")

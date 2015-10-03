@@ -1183,6 +1183,25 @@ class FilterRule {
 	}
 
 	/**
+	 * Resolves the data items
+	 */
+	public resolve(packageNames: string[], exportName: string): Q.Promise<any> {
+		return Utils.resolvedPromise();
+	}
+
+	/**
+	 * Tests the file against this rule
+	 * @param file - File to test
+	 */
+	public test(file: File, context: IExecutionContext): boolean {
+		return (!this.fullnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.fullnameLike, context.packageName), true), file.relative))
+			&& (!this.filenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.filenameLike, context.packageName), true), path.basename(file.relative)))
+			&& (!this.dirnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.dirnameLike, context.packageName), true), path.dirname(file.relative)))
+			&& (!this.basenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.basenameLike, context.packageName), true), path.basename(file.relative, path.extname(file.relative))))
+			&& (!this.extnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.extnameLike, context.packageName), true), path.extname(file.relative)));
+	}
+
+	/**
 	 * Returns this rule's stream
 	 */
 	public createStream(context: IExecutionContext): NodeJS.ReadWriteStream {
@@ -1193,11 +1212,7 @@ class FilterRule {
 	 * Transform
 	 */
 	private transformObjects(transformStream: stream.Transform, file: File, encoding: string, context: IExecutionContext): Q.Promise<any> {
-		if ((!this.fullnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.fullnameLike, context.packageName), true), file.relative))
-			&& (!this.filenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.filenameLike, context.packageName), true), path.basename(file.relative)))
-			&& (!this.dirnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.dirnameLike, context.packageName), true), path.dirname(file.relative)))
-			&& (!this.basenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.basenameLike, context.packageName), true), path.basename(file.relative, path.extname(file.relative))))
-			&& (!this.extnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.extnameLike, context.packageName), true), path.extname(file.relative)))) {
+		if (this.test(file, context)) {
 			transformStream.push(file);
 		}
 		return Utils.resolvedPromise();
@@ -1213,9 +1228,12 @@ class RenameRule {
 	public type: RuleType = RuleType.Rename;
 	public id: string;
 
+	public if: string;
 	public replace: string;
 	public in: FileNamePart;
 	public with: string;
+
+	public filters: FilterRule[];
 
 	/**
 	 * Constructor
@@ -1224,9 +1242,11 @@ class RenameRule {
 		this.plugin = plugin;
 		this.id = data.id;
 
+		this.if = Utils.trimAdjustString(data.if, null, null, null, null);
 		this.replace = Utils.trimAdjustString(data.replace, null, null, null, null);
 		this.in = Utils.adjustEnumValue(data.in, FileNamePart.FileName, FileNamePart, false);
 		this.with = Utils.trimAdjustString(data.with, null, null, null, '');
+		this.filters = null;
 	}
 
 	/**
@@ -1234,6 +1254,44 @@ class RenameRule {
 	 */
 	public get valid(): boolean {
 		return this.with !== null;
+	}
+
+	/**
+	 * Resolves the data items
+	 */
+	public resolve(packageNames: string[], exportName: string): Q.Promise<any> {
+		if (this.if !== null) {
+			var filter: any = Utils.trimAdjustString(this.if, null, null, null, '');
+			filter = (filter || '').split(',');
+			filter = Enumerable.from(filter).distinct().toArray();
+			try {
+				this.filters = Utils.ensureArray(filter, s => {
+					s = Utils.trimAdjustString(s, null, null, null, null);
+					if (!s) {
+						return undefined;
+					}
+
+					if (s.indexOf('#') === 0) {
+						return this.plugin.resolveRule<FilterRule>(s.substr(1), RuleType.Filter) || undefined;
+					}
+					var rule = new FilterRule(this.plugin, {
+						id: Utils.generateUniqueRuleId(RuleType.Filter),
+						type: RuleType[RuleType.Filter].toLowerCase(),
+						fullnameLike: s
+					});
+					if (!rule.valid) {
+						Utils.log(LogType.Error,
+							'Invalid filter expression encountered (rule: \'{0}\', type: \'{1}\' src: \'{2}\')',
+							this.id, RuleType[this.type], s);
+						throw new Error();
+					}
+					return rule;
+				}) || [];
+			} catch (e) {
+				return Utils.rejectedPromise();
+			}
+		}
+		return Utils.resolvedPromise();
 	}
 
 	/**
@@ -1247,6 +1305,12 @@ class RenameRule {
 	 * Transform
 	 */
 	private transformObjects(transformStream: stream.Transform, file: File, encoding: string, context: IExecutionContext): Q.Promise<any> {
+		// Filter
+		if (this.filters && this.filters.length
+			&& Enumerable.from(this.filters).any(f => !f.test(file, context))) {
+			return Utils.pushFiles(transformStream, [file]);
+		}
+
 		// Rename
 		var replace = this.replace
 			? Utils.toRegExp(this.plugin.replacePackageToken(this.replace, context.packageName), true)
@@ -1290,8 +1354,11 @@ class ReplaceContentRule {
 	public type: RuleType = RuleType.ReplaceContent;
 	public id: string;
 
+	public if: string;
 	public replace: string;
 	public with: string;
+
+	public filters: FilterRule[];
 
 	/**
 	 * Constructor
@@ -1300,8 +1367,10 @@ class ReplaceContentRule {
 		this.plugin = plugin;
 		this.id = data.id;
 
+		this.if = Utils.trimAdjustString(data.if, null, null, null, null);
 		this.replace = Utils.trimAdjustString(data.replace, null, null, null, null);
 		this.with = Utils.trimAdjustString(data.with, null, null, null, '');
+		this.filters = null;
 	}
 
 	/**
@@ -1309,6 +1378,44 @@ class ReplaceContentRule {
 	 */
 	public get valid(): boolean {
 		return this.with !== null;
+	}
+
+	/**
+	 * Resolves the data items
+	 */
+	public resolve(packageNames: string[], exportName: string): Q.Promise<any> {
+		if (this.if !== null) {
+			var filter: any = Utils.trimAdjustString(this.if, null, null, null, '');
+			filter = (filter || '').split(',');
+			filter = Enumerable.from(filter).distinct().toArray();
+			try {
+				this.filters = Utils.ensureArray(filter, s => {
+					s = Utils.trimAdjustString(s, null, null, null, null);
+					if (!s) {
+						return undefined;
+					}
+
+					if (s.indexOf('#') === 0) {
+						return this.plugin.resolveRule<FilterRule>(s.substr(1), RuleType.Filter) || undefined;
+					}
+					var rule = new FilterRule(this.plugin, {
+						id: Utils.generateUniqueRuleId(RuleType.Filter),
+						type: RuleType[RuleType.Filter].toLowerCase(),
+						fullnameLike: s
+					});
+					if (!rule.valid) {
+						Utils.log(LogType.Error,
+							'Invalid filter expression encountered (rule: \'{0}\', type: \'{1}\' src: \'{2}\')',
+							this.id, RuleType[this.type], s);
+						throw new Error();
+					}
+					return rule;
+				}) || [];
+			} catch (e) {
+				return Utils.rejectedPromise();
+			}
+		}
+		return Utils.resolvedPromise();
 	}
 
 	/**
@@ -1322,6 +1429,12 @@ class ReplaceContentRule {
 	 * Transform
 	 */
 	private transformObjects(transformStream: stream.Transform, file: File, encoding: string, context: IExecutionContext): Q.Promise<any> {
+		// Filter
+		if (this.filters && this.filters.length
+			&& Enumerable.from(this.filters).any(f => !f.test(file, context))) {
+			return Utils.pushFiles(transformStream, [file]);
+		}
+
 		// Perform only if we have content
 		if (!file.isNull()) {
 			var originalContentIsBuffer = gUtil.isBuffer(file.contents);
@@ -1393,6 +1506,13 @@ class MoveRule {
 	 */
 	public get valid(): boolean {
 		return !!this.to;
+	}
+
+	/**
+	 * Resolves the data items
+	 */
+	public resolve(packageNames: string[], exportName: string): Q.Promise<any> {
+		return Utils.resolvedPromise();
 	}
 
 	/**
@@ -1505,6 +1625,13 @@ class CheckChangesRule {
 	public get valid(): boolean {
 		return this._isValid
 			&& (this.plugin.options.checkChangesDestination !== null);
+	}
+
+	/**
+	 * Resolves the data items
+	 */
+	public resolve(packageNames: string[], exportName: string): Q.Promise<any> {
+		return Utils.resolvedPromise();
 	}
 
 	/**
@@ -1770,7 +1897,19 @@ class Export {
 	 * Resolves the source patterns
 	 */
 	public resolve(): Q.Promise<any> {
-		return this.source.resolve(this.packageNames, this.name);
+		var promises: Q.Promise<any>[] = [];
+
+		promises.push(this.source.resolve(this.packageNames, this.name));
+		promises = promises.concat(Enumerable.from(this.filter).select(f => f.resolve(this.packageNames, this.name)).toArray());
+		promises = promises.concat(Enumerable.from(this.rename).select(r => r.resolve(this.packageNames, this.name)).toArray());
+		promises = promises.concat(Enumerable.from(this.replaceContent).select(r => r.resolve(this.packageNames, this.name)).toArray());
+		if (this.move) {
+			promises.push(this.move.resolve(this.packageNames, this.name));
+		}
+		promises = promises.concat(Enumerable.from(this.ifChanged).select(c => c.resolve(this.packageNames, this.name)).toArray());
+
+		// Return
+		return Q.all(promises);
 	}
 
 	/**

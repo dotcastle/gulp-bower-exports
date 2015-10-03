@@ -200,6 +200,11 @@ interface IRenameRule {
 	id: string;
 
 	/**
+	 * Filter rule id(s)
+	 */
+	if?: string;
+
+	/**
 	 * Phrase or regex pattern to search in the file name
 	 */
 	replace?: string;
@@ -228,6 +233,11 @@ interface IReplaceContentRule {
 	 * Id of the element
 	 */
 	id: string;
+
+	/**
+	 * Filter rule id(s)
+	 */
+	if?: string;
 
 	/**
 	 * Phrase or regex pattern to search in the file content

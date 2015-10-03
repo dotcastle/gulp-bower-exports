@@ -1102,6 +1102,23 @@ var FilterRule = (function () {
         configurable: true
     });
     /**
+     * Resolves the data items
+     */
+    FilterRule.prototype.resolve = function (packageNames, exportName) {
+        return Utils.resolvedPromise();
+    };
+    /**
+     * Tests the file against this rule
+     * @param file - File to test
+     */
+    FilterRule.prototype.test = function (file, context) {
+        return (!this.fullnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.fullnameLike, context.packageName), true), file.relative))
+            && (!this.filenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.filenameLike, context.packageName), true), path.basename(file.relative)))
+            && (!this.dirnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.dirnameLike, context.packageName), true), path.dirname(file.relative)))
+            && (!this.basenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.basenameLike, context.packageName), true), path.basename(file.relative, path.extname(file.relative))))
+            && (!this.extnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.extnameLike, context.packageName), true), path.extname(file.relative)));
+    };
+    /**
      * Returns this rule's stream
      */
     FilterRule.prototype.createStream = function (context) {
@@ -1111,11 +1128,7 @@ var FilterRule = (function () {
      * Transform
      */
     FilterRule.prototype.transformObjects = function (transformStream, file, encoding, context) {
-        if ((!this.fullnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.fullnameLike, context.packageName), true), file.relative))
-            && (!this.filenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.filenameLike, context.packageName), true), path.basename(file.relative)))
-            && (!this.dirnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.dirnameLike, context.packageName), true), path.dirname(file.relative)))
-            && (!this.basenameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.basenameLike, context.packageName), true), path.basename(file.relative, path.extname(file.relative))))
-            && (!this.extnameLike || Utils.testRegExp(Utils.toRegExp(this.plugin.replacePackageToken(this.extnameLike, context.packageName), true), path.extname(file.relative)))) {
+        if (this.test(file, context)) {
             transformStream.push(file);
         }
         return Utils.resolvedPromise();
@@ -1133,9 +1146,11 @@ var RenameRule = (function () {
         this.type = RuleType.Rename;
         this.plugin = plugin;
         this.id = data.id;
+        this.if = Utils.trimAdjustString(data.if, null, null, null, null);
         this.replace = Utils.trimAdjustString(data.replace, null, null, null, null);
         this.in = Utils.adjustEnumValue(data.in, FileNamePart.FileName, FileNamePart, false);
         this.with = Utils.trimAdjustString(data.with, null, null, null, '');
+        this.filters = null;
     }
     Object.defineProperty(RenameRule.prototype, "valid", {
         /**
@@ -1148,6 +1163,42 @@ var RenameRule = (function () {
         configurable: true
     });
     /**
+     * Resolves the data items
+     */
+    RenameRule.prototype.resolve = function (packageNames, exportName) {
+        var _this = this;
+        if (this.if !== null) {
+            var filter = Utils.trimAdjustString(this.if, null, null, null, '');
+            filter = (filter || '').split(',');
+            filter = Enumerable.from(filter).distinct().toArray();
+            try {
+                this.filters = Utils.ensureArray(filter, function (s) {
+                    s = Utils.trimAdjustString(s, null, null, null, null);
+                    if (!s) {
+                        return undefined;
+                    }
+                    if (s.indexOf('#') === 0) {
+                        return _this.plugin.resolveRule(s.substr(1), RuleType.Filter) || undefined;
+                    }
+                    var rule = new FilterRule(_this.plugin, {
+                        id: Utils.generateUniqueRuleId(RuleType.Filter),
+                        type: RuleType[RuleType.Filter].toLowerCase(),
+                        fullnameLike: s
+                    });
+                    if (!rule.valid) {
+                        Utils.log(LogType.Error, 'Invalid filter expression encountered (rule: \'{0}\', type: \'{1}\' src: \'{2}\')', _this.id, RuleType[_this.type], s);
+                        throw new Error();
+                    }
+                    return rule;
+                }) || [];
+            }
+            catch (e) {
+                return Utils.rejectedPromise();
+            }
+        }
+        return Utils.resolvedPromise();
+    };
+    /**
      * Returns this rule's stream
      */
     RenameRule.prototype.createStream = function (context) {
@@ -1157,6 +1208,11 @@ var RenameRule = (function () {
      * Transform
      */
     RenameRule.prototype.transformObjects = function (transformStream, file, encoding, context) {
+        // Filter
+        if (this.filters && this.filters.length
+            && Enumerable.from(this.filters).any(function (f) { return !f.test(file, context); })) {
+            return Utils.pushFiles(transformStream, [file]);
+        }
         // Rename
         var replace = this.replace
             ? Utils.toRegExp(this.plugin.replacePackageToken(this.replace, context.packageName), true)
@@ -1205,8 +1261,10 @@ var ReplaceContentRule = (function () {
         this.type = RuleType.ReplaceContent;
         this.plugin = plugin;
         this.id = data.id;
+        this.if = Utils.trimAdjustString(data.if, null, null, null, null);
         this.replace = Utils.trimAdjustString(data.replace, null, null, null, null);
         this.with = Utils.trimAdjustString(data.with, null, null, null, '');
+        this.filters = null;
     }
     Object.defineProperty(ReplaceContentRule.prototype, "valid", {
         /**
@@ -1219,6 +1277,42 @@ var ReplaceContentRule = (function () {
         configurable: true
     });
     /**
+     * Resolves the data items
+     */
+    ReplaceContentRule.prototype.resolve = function (packageNames, exportName) {
+        var _this = this;
+        if (this.if !== null) {
+            var filter = Utils.trimAdjustString(this.if, null, null, null, '');
+            filter = (filter || '').split(',');
+            filter = Enumerable.from(filter).distinct().toArray();
+            try {
+                this.filters = Utils.ensureArray(filter, function (s) {
+                    s = Utils.trimAdjustString(s, null, null, null, null);
+                    if (!s) {
+                        return undefined;
+                    }
+                    if (s.indexOf('#') === 0) {
+                        return _this.plugin.resolveRule(s.substr(1), RuleType.Filter) || undefined;
+                    }
+                    var rule = new FilterRule(_this.plugin, {
+                        id: Utils.generateUniqueRuleId(RuleType.Filter),
+                        type: RuleType[RuleType.Filter].toLowerCase(),
+                        fullnameLike: s
+                    });
+                    if (!rule.valid) {
+                        Utils.log(LogType.Error, 'Invalid filter expression encountered (rule: \'{0}\', type: \'{1}\' src: \'{2}\')', _this.id, RuleType[_this.type], s);
+                        throw new Error();
+                    }
+                    return rule;
+                }) || [];
+            }
+            catch (e) {
+                return Utils.rejectedPromise();
+            }
+        }
+        return Utils.resolvedPromise();
+    };
+    /**
      * Returns this rule's stream
      */
     ReplaceContentRule.prototype.createStream = function (context) {
@@ -1228,6 +1322,11 @@ var ReplaceContentRule = (function () {
      * Transform
      */
     ReplaceContentRule.prototype.transformObjects = function (transformStream, file, encoding, context) {
+        // Filter
+        if (this.filters && this.filters.length
+            && Enumerable.from(this.filters).any(function (f) { return !f.test(file, context); })) {
+            return Utils.pushFiles(transformStream, [file]);
+        }
         // Perform only if we have content
         if (!file.isNull()) {
             var originalContentIsBuffer = gUtil.isBuffer(file.contents);
@@ -1293,6 +1392,12 @@ var MoveRule = (function () {
         enumerable: true,
         configurable: true
     });
+    /**
+     * Resolves the data items
+     */
+    MoveRule.prototype.resolve = function (packageNames, exportName) {
+        return Utils.resolvedPromise();
+    };
     /**
      * Returns this rule's stream
      */
@@ -1388,6 +1493,12 @@ var CheckChangesRule = (function () {
         enumerable: true,
         configurable: true
     });
+    /**
+     * Resolves the data items
+     */
+    CheckChangesRule.prototype.resolve = function (packageNames, exportName) {
+        return Utils.resolvedPromise();
+    };
     /**
      * Returns this rule's stream
      */
@@ -1615,7 +1726,18 @@ var Export = (function () {
      * Resolves the source patterns
      */
     Export.prototype.resolve = function () {
-        return this.source.resolve(this.packageNames, this.name);
+        var _this = this;
+        var promises = [];
+        promises.push(this.source.resolve(this.packageNames, this.name));
+        promises = promises.concat(Enumerable.from(this.filter).select(function (f) { return f.resolve(_this.packageNames, _this.name); }).toArray());
+        promises = promises.concat(Enumerable.from(this.rename).select(function (r) { return r.resolve(_this.packageNames, _this.name); }).toArray());
+        promises = promises.concat(Enumerable.from(this.replaceContent).select(function (r) { return r.resolve(_this.packageNames, _this.name); }).toArray());
+        if (this.move) {
+            promises.push(this.move.resolve(this.packageNames, this.name));
+        }
+        promises = promises.concat(Enumerable.from(this.ifChanged).select(function (c) { return c.resolve(_this.packageNames, _this.name); }).toArray());
+        // Return
+        return Q.all(promises);
     };
     /**
      * Creates the export stream for the specified package name

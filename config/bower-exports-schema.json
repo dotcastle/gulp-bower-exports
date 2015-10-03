@@ -215,6 +215,12 @@
 			"properties": {
 				"type": { "type": "string", "default": "rename", "enum": ["rename"] },
 				"id": { "$ref": "#/definitions/elementId" },
+
+				"if": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Name Filter Ids",
+					"description": "Comma separated id(s) of filter rule elements"
+				},
 				"replace": {
 					"$ref": "#/definitions/nonEmptyString",
 					"title": "Search expression",
@@ -244,6 +250,12 @@
 			"properties": {
 				"type": { "type": "string", "default": "replaceContent", "enum": ["replaceContent"] },
 				"id": { "$ref": "#/definitions/elementId" },
+
+				"if": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Name Filter Ids",
+					"description": "Comma separated id(s) of filter rule elements"
+				},
 				"replace": {
 					"$ref": "#/definitions/nonEmptyString",
 					"title": "Search expression",

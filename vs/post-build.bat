@@ -6,8 +6,8 @@ copy /Y "..\test\bower-exports.json" "..\config"
 
 cd ..
 md package 2> nul
-copy /Y "index.js" "package"
-copy /Y "package.json" "package"
+copy /Y "index.js" "package\index.js"
+copy /Y "package.json" "package\package.json"
 
 cd test
 call npm uninstall gulp-bower-exports 2> nul

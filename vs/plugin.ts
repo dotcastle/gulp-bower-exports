@@ -1753,7 +1753,12 @@ class Export {
 		var source: any = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
 		source = Utils.replaceBracedGlobPatterns(source);
 		source = (source || '').split(',');
-		source.push(includeRules.source);
+
+		var concatSource: any = Utils.trimAdjustString(includeRules.source, null, null, null, null);
+		concatSource = Utils.replaceBracedGlobPatterns(concatSource);
+		concatSource = (concatSource || '').split(',');
+
+		source = source.concat(concatSource);
 		source = Enumerable.from(source).distinct().toArray();
 		var sourceRules = Utils.ensureArray(source, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
@@ -1796,7 +1801,11 @@ class Export {
 
 		var filter: any = Utils.trimAdjustString(data.filter, defaultRules.filter, defaultRules.filter, defaultRules.filter, '');
 		filter = (filter || '').split(',');
-		filter.push(includeRules.filter);
+
+		var concatFilter: any = Utils.trimAdjustString(includeRules.filter, null, null, null, null);
+		concatFilter = (concatFilter || '').split(',');
+
+		filter = filter.concat(concatFilter);
 		filter = Enumerable.from(filter).distinct().toArray();
 		this.filter = Utils.ensureArray(filter, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
@@ -1824,7 +1833,11 @@ class Export {
 
 		var rename: any = Utils.trimAdjustString(data.rename, defaultRules.rename, defaultRules.rename, defaultRules.rename, '');
 		rename = (rename || '').split(',');
-		rename.push(includeRules.rename);
+
+		var concatRename: any = Utils.trimAdjustString(includeRules.rename, null, null, null, null);
+		concatRename = (concatRename || '').split(',');
+
+		rename = rename.concat(concatRename);
 		rename = Enumerable.from(rename).distinct().toArray();
 		this.rename = Utils.ensureArray(rename, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
@@ -1852,7 +1865,11 @@ class Export {
 
 		var replaceContent: any = Utils.trimAdjustString(data.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, '');
 		replaceContent = (replaceContent || '').split(',');
-		replaceContent.push(includeRules.replaceContent);
+
+		var concatReplaceContent: any = Utils.trimAdjustString(includeRules.replaceContent, null, null, null, null);
+		concatReplaceContent = (concatReplaceContent || '').split(',');
+
+		replaceContent = replaceContent.concat(concatReplaceContent);
 		replaceContent = Enumerable.from(replaceContent).distinct().toArray();
 		this.replaceContent = Utils.ensureArray(replaceContent, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
@@ -1911,7 +1928,11 @@ class Export {
 
 		var ifChanged: any = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
 		ifChanged = (ifChanged || '').split(',');
-		ifChanged.push(includeRules.changeCheckers);
+
+		var concatChange: any = Utils.trimAdjustString(includeRules.changeCheckers, null, null, null, null);
+		concatChange = (concatChange || '').split(',');
+
+		ifChanged = ifChanged.concat(concatChange);
 		ifChanged = Enumerable.from(ifChanged).distinct().toArray();
 		this.ifChanged = Utils.ensureArray(ifChanged, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);

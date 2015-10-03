@@ -1454,14 +1454,15 @@ var MoveRule = (function () {
      */
     MoveRule.prototype.transformObjects = function (transform, file, encoding, context) {
         if (!file.isDirectory()) {
-            if (this.hierarchyAdjustment === HierarchyAdjustment.None) {
+            var hierarchyAdjustment = Utils.adjustEnumValue(context.hierarchyAdjustment, this.hierarchyAdjustment, HierarchyAdjustment, false);
+            if (hierarchyAdjustment === HierarchyAdjustment.None) {
                 var to = this.plugin.replacePackageToken(this.to, (context.exportInstance.overridingMovePackageName !== null)
                     ? context.exportInstance.overridingMovePackageName
                     : context.packageName, true);
                 Utils.setFilePath(file, path.join(to, file.relative));
                 transform.push(file);
             }
-            else if (this.hierarchyAdjustment === HierarchyAdjustment.Flattened) {
+            else if (hierarchyAdjustment === HierarchyAdjustment.Flattened) {
                 var to = this.plugin.replacePackageToken(this.to, (context.exportInstance.overridingMovePackageName !== null)
                     ? context.exportInstance.overridingMovePackageName
                     : context.packageName, true);
@@ -1479,7 +1480,8 @@ var MoveRule = (function () {
      */
     MoveRule.prototype.flushObjects = function (transform, context) {
         // If not minimized, return
-        if (this.hierarchyAdjustment !== HierarchyAdjustment.Minimized) {
+        var hierarchyAdjustment = Utils.adjustEnumValue(context.hierarchyAdjustment, this.hierarchyAdjustment, HierarchyAdjustment, false);
+        if (hierarchyAdjustment !== HierarchyAdjustment.Minimized) {
             return Utils.resolvedPromise();
         }
         // Adjust Hierarchy
@@ -1743,9 +1745,6 @@ var Export = (function () {
         if (this.hierarchyAdjustment === null) {
             this.hierarchyAdjustment = Utils.adjustEnumValue(defaultRules.hierarchyAdjustment, null, HierarchyAdjustment, false);
         }
-        if (this.move && (this.hierarchyAdjustment !== null)) {
-            this.move.hierarchyAdjustment = this.hierarchyAdjustment;
-        }
         var ifChanged = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
         ifChanged = (ifChanged || '').split(',');
         var concatChange = Utils.trimAdjustString(includeRules.changeCheckers, null, null, null, null);
@@ -1809,6 +1808,7 @@ var Export = (function () {
         var context = {
             exportInstance: this,
             packageName: packageName,
+            hierarchyAdjustment: this.hierarchyAdjustment,
             sourceFiles: [],
             moveFiles: []
         };

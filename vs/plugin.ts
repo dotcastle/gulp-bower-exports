@@ -96,6 +96,7 @@ interface IFileInfo {
 interface IExecutionContext {
 	exportInstance: Export;
 	packageName: string;
+	hierarchyAdjustment?: HierarchyAdjustment;
 
 	sourceFiles: File[];
 	moveFiles: File[];
@@ -1571,7 +1572,8 @@ class MoveRule {
 	 */
 	private transformObjects(transform: stream.Transform, file: File, encoding: string, context: IExecutionContext): Q.Promise<any> {
 		if (!file.isDirectory()) {
-			if (this.hierarchyAdjustment === HierarchyAdjustment.None) {
+			var hierarchyAdjustment = Utils.adjustEnumValue(context.hierarchyAdjustment, this.hierarchyAdjustment, HierarchyAdjustment, false);
+			if (hierarchyAdjustment === HierarchyAdjustment.None) {
 				let to = this.plugin.replacePackageToken(this.to,
 					(context.exportInstance.overridingMovePackageName !== null)
 						? context.exportInstance.overridingMovePackageName
@@ -1579,7 +1581,7 @@ class MoveRule {
 					true);
 				Utils.setFilePath(file, path.join(to, file.relative));
 				transform.push(file);
-			} else if (this.hierarchyAdjustment === HierarchyAdjustment.Flattened) {
+			} else if (hierarchyAdjustment === HierarchyAdjustment.Flattened) {
 				let to = this.plugin.replacePackageToken(this.to,
 					(context.exportInstance.overridingMovePackageName !== null)
 						? context.exportInstance.overridingMovePackageName
@@ -1599,7 +1601,8 @@ class MoveRule {
 	 */
 	private flushObjects(transform: stream.Transform, context: IExecutionContext): Q.Promise<any> {
 		// If not minimized, return
-		if (this.hierarchyAdjustment !== HierarchyAdjustment.Minimized) {
+		var hierarchyAdjustment = Utils.adjustEnumValue(context.hierarchyAdjustment, this.hierarchyAdjustment, HierarchyAdjustment, false);
+		if (hierarchyAdjustment !== HierarchyAdjustment.Minimized) {
 			return Utils.resolvedPromise();
 		}
 
@@ -1917,13 +1920,9 @@ class Export {
 		}
 
 		this.overridingMovePackageName = Utils.trimAdjustString(data.overridingMovePackageName, null, null, null, '');
-
 		this.hierarchyAdjustment = Utils.adjustEnumValue(data.withHierarchy, null, HierarchyAdjustment, false);
 		if (this.hierarchyAdjustment === null) {
 			this.hierarchyAdjustment = Utils.adjustEnumValue(defaultRules.hierarchyAdjustment, null, HierarchyAdjustment, false);
-		}
-		if (this.move && (this.hierarchyAdjustment !== null)) {
-			this.move.hierarchyAdjustment = this.hierarchyAdjustment;
 		}
 
 		var ifChanged: any = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
@@ -1994,6 +1993,7 @@ class Export {
 		var context = {
 			exportInstance: this,
 			packageName: packageName,
+			hierarchyAdjustment: this.hierarchyAdjustment,
 			sourceFiles: [],
 			moveFiles: []
 		};

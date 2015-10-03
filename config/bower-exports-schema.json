@@ -4,8 +4,6 @@
 	"name": "/",
 
 	"type": "object",
-	"additionalProperties": false,
-
 	"title": "Bower Exports Schema",
 	"description": "JSON schema for the exports section for the gulp-bower-exports plugin",
 
@@ -153,8 +151,6 @@
 
 		"sourceRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Source Rule",
 			"description": "Selects source files for processing",
 
@@ -169,8 +165,6 @@
 
 		"filterRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Name Filter Rule",
 			"description": "Filters source files for further processing",
 
@@ -215,8 +209,6 @@
 
 		"renameRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "File Name Replacement",
 			"description": "Specifies criteria to replace one or more parts of the file name",
 
@@ -246,8 +238,6 @@
 
 		"replaceContentRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "File Content Replacement",
 			"description": "Specifies criteria to replace contents of a file",
 
@@ -271,8 +261,6 @@
 
 		"moveRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Move Rule",
 			"description": "Specifies criteria to relocate the files to a different location relative to the dest directory",
 
@@ -292,8 +280,6 @@
 
 		"checkChangesRule": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Check Changes Rule",
 			"description": "Specifies criteria to check if the source files changed compared to the detination files. These options are passed to the gulp-changed plugin.",
 
@@ -327,8 +313,6 @@
 
 		"export": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": " Export",
 			"description": "Export directive which is executed as a primary action",
 
@@ -389,7 +373,7 @@
 				}
 			},
 
-			"required": ["from", "select"]
+			"required": ["from"]
 		}
 	},
 
@@ -411,8 +395,6 @@
 
 		"defaultRules": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Default Rules",
 			"description": "Rules to be applied when not specified in the exports",
 
@@ -456,8 +438,6 @@
 
 		"includeRules": {
 			"type": "object",
-			"additionalProperties": false,
-
 			"title": "Include Rules",
 			"description": "Rules to be included to all exports",
 

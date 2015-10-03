@@ -1579,6 +1579,7 @@ class Export {
 		var source: any = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
 		source = (source || '').split(',');
 		source.push(includeRules.source);
+		source = Enumerable.from(source).distinct().toArray();
 		var sourceRules = Utils.ensureArray(source, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) { return undefined; }
@@ -1621,6 +1622,7 @@ class Export {
 		var filter: any = Utils.trimAdjustString(data.filter, defaultRules.filter, defaultRules.filter, defaultRules.filter, '');
 		filter = (filter || '').split(',');
 		filter.push(includeRules.filter);
+		filter = Enumerable.from(filter).distinct().toArray();
 		this.filter = Utils.ensureArray(filter, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1648,6 +1650,7 @@ class Export {
 		var rename: any = Utils.trimAdjustString(data.rename, defaultRules.rename, defaultRules.rename, defaultRules.rename, '');
 		rename = (rename || '').split(',');
 		rename.push(includeRules.rename);
+		rename = Enumerable.from(rename).distinct().toArray();
 		this.rename = Utils.ensureArray(rename, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1675,6 +1678,7 @@ class Export {
 		var replaceContent: any = Utils.trimAdjustString(data.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, '');
 		replaceContent = (replaceContent || '').split(',');
 		replaceContent.push(includeRules.replaceContent);
+		replaceContent = Enumerable.from(replaceContent).distinct().toArray();
 		this.replaceContent = Utils.ensureArray(replaceContent, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1733,6 +1737,7 @@ class Export {
 		var ifChanged: any = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
 		ifChanged = (ifChanged || '').split(',');
 		ifChanged.push(includeRules.changeCheckers);
+		ifChanged = Enumerable.from(ifChanged).distinct().toArray();
 		this.ifChanged = Utils.ensureArray(ifChanged, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {

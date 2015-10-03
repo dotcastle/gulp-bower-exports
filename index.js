@@ -1438,6 +1438,7 @@ var Export = (function () {
         var source = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
         source = (source || '').split(',');
         source.push(includeRules.source);
+        source = Enumerable.from(source).distinct().toArray();
         var sourceRules = Utils.ensureArray(source, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1482,6 +1483,7 @@ var Export = (function () {
         var filter = Utils.trimAdjustString(data.filter, defaultRules.filter, defaultRules.filter, defaultRules.filter, '');
         filter = (filter || '').split(',');
         filter.push(includeRules.filter);
+        filter = Enumerable.from(filter).distinct().toArray();
         this.filter = Utils.ensureArray(filter, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1505,6 +1507,7 @@ var Export = (function () {
         var rename = Utils.trimAdjustString(data.rename, defaultRules.rename, defaultRules.rename, defaultRules.rename, '');
         rename = (rename || '').split(',');
         rename.push(includeRules.rename);
+        rename = Enumerable.from(rename).distinct().toArray();
         this.rename = Utils.ensureArray(rename, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1528,6 +1531,7 @@ var Export = (function () {
         var replaceContent = Utils.trimAdjustString(data.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, '');
         replaceContent = (replaceContent || '').split(',');
         replaceContent.push(includeRules.replaceContent);
+        replaceContent = Enumerable.from(replaceContent).distinct().toArray();
         this.replaceContent = Utils.ensureArray(replaceContent, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1578,6 +1582,7 @@ var Export = (function () {
         var ifChanged = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
         ifChanged = (ifChanged || '').split(',');
         ifChanged.push(includeRules.changeCheckers);
+        ifChanged = Enumerable.from(ifChanged).distinct().toArray();
         this.ifChanged = Utils.ensureArray(ifChanged, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {

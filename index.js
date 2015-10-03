@@ -321,7 +321,7 @@ var Utils = (function () {
         if (!Utils.isType(src, String)) {
             return src;
         }
-        var regex = /\{[^\}]+\}/g;
+        var regex = /\{.+\}/g;
         if (Utils.testRegExp(regex, src)) {
             src = src.replace(regex, function (m) {
                 var innerContent = Utils.replaceBracedGlobPatterns(m.substr(1, m.length - 2));

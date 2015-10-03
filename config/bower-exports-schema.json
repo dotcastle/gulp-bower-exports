@@ -4,7 +4,7 @@
 	"name": "/",
 
 	"type": "object",
-	"additionalProperties": true,
+	"additionalProperties": false,
 
 	"title": "Bower Exports Schema",
 	"description": "JSON schema for the exports section for the gulp-bower-exports plugin",
@@ -407,6 +407,87 @@
 					"items": { "$ref": "#/definitions/rule" }
 				}
 			]
+		},
+
+		"defaultRules": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Default Rules",
+			"description": "Rules to be applied when not specified in the exports",
+
+			"properties": {
+				"source": {
+					"$ref": "#/definitions/elementIdRefOrSources",
+					"title": "Source Id",
+					"description": "Id of the source rule element"
+				},
+				"filter": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Filter Id",
+					"description": "Id of the filter rule element"
+				},
+				"rename": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Rename Id",
+					"description": "Id of the rename rule element"
+				},
+				"replaceContent": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Replace Content Id",
+					"description": "Id of the source rule element"
+				},
+				"move": {
+					"title": "Move Id",
+					"description": "Id of the move rule element",
+					"anyOf": [
+						{ "$ref": "#/definitions/elementIdRef" },
+						{ "$ref": "#/definitions/nonEmptyString" }
+					]
+				},
+				"hierarchyAdjustment": { "$ref": "#/definitions/hierarchyAdjustmentMode" },
+				"changeCheckers": {
+					"$ref": "#/definitions/elementIdRefs",
+					"title": "Change Checker Id",
+					"description": "Id of the change checker rule element"
+				}
+			}
+		},
+
+		"includeRules": {
+			"type": "object",
+			"additionalProperties": false,
+
+			"title": "Include Rules",
+			"description": "Rules to be included to all exports",
+
+			"properties": {
+				"source": {
+					"$ref": "#/definitions/elementIdRefOrSources",
+					"title": "Source Id",
+					"description": "Id of the source rule element"
+				},
+				"filter": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Filter Id",
+					"description": "Id of the filter rule element"
+				},
+				"rename": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Rename Id",
+					"description": "Id of the rename rule element"
+				},
+				"replaceContent": {
+					"$ref": "#/definitions/elementIdRefOrNonElementIdRefWithoutCommas",
+					"title": "Replace Content Id",
+					"description": "Id of the source rule element"
+				},
+				"changeCheckers": {
+					"$ref": "#/definitions/elementIdRefs",
+					"title": "Change Checker Id",
+					"description": "Id of the change checker rule element"
+				}
+			}
 		},
 
 		"exports": {

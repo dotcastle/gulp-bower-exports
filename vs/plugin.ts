@@ -1548,7 +1548,7 @@ class Export {
 	/**
 	 * Constructor
 	 */
-	constructor(plugin: BowerExportsPlugin, data: IExport) {
+	constructor(plugin: BowerExportsPlugin, data: IExport, defaultRules: IDefaultRules, includeRules: IIncludeRules) {
 		this.plugin = plugin;
 
 		this.name = Utils.trimAdjustString(data.name, null, null, null, null);
@@ -1576,8 +1576,9 @@ class Export {
 				.toArray();
 		}) || []).distinct().toArray();
 
-		var source: any = Utils.trimAdjustString(data.select, null, null, null, null);
-		source = source ? source.split(',') : source;
+		var source: any = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
+		source = (source || '').split(',');
+		source.push(includeRules.source);
 		var sourceRules = Utils.ensureArray(source, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) { return undefined; }
@@ -1617,8 +1618,9 @@ class Export {
 			this.source = null;
 		}
 
-		var filter: any = Utils.trimAdjustString(data.filter, null, null, null, null);
-		filter = filter ? filter.split(',') : filter;
+		var filter: any = Utils.trimAdjustString(data.filter, defaultRules.filter, defaultRules.filter, defaultRules.filter, '');
+		filter = (filter || '').split(',');
+		filter.push(includeRules.filter);
 		this.filter = Utils.ensureArray(filter, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1643,8 +1645,9 @@ class Export {
 			return rule;
 		}) || [];
 
-		var rename: any = Utils.trimAdjustString(data.rename, null, null, null, null);
-		rename = rename ? rename.split(',') : rename;
+		var rename: any = Utils.trimAdjustString(data.rename, defaultRules.rename, defaultRules.rename, defaultRules.rename, '');
+		rename = (rename || '').split(',');
+		rename.push(includeRules.rename);
 		this.rename = Utils.ensureArray(rename, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1669,8 +1672,9 @@ class Export {
 			return rule;
 		}) || [];
 
-		var replaceContent: any = Utils.trimAdjustString(data.replaceContent, null, null, null, null);
-		replaceContent = replaceContent ? replaceContent.split(',') : replaceContent;
+		var replaceContent: any = Utils.trimAdjustString(data.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, '');
+		replaceContent = (replaceContent || '').split(',');
+		replaceContent.push(includeRules.replaceContent);
 		this.replaceContent = Utils.ensureArray(replaceContent, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -1696,7 +1700,7 @@ class Export {
 		}) || [];
 
 		this.move = null;
-		var move = Utils.trimAdjustString(data.move, null, null, null, null);
+		var move = Utils.trimAdjustString(data.move, defaultRules.move, defaultRules.move, defaultRules.move, null);
 		if (move) {
 			if (move.indexOf('#') === 0) {
 				this.move = plugin.resolveRule<MoveRule>(move.substr(1), RuleType.Move);
@@ -1717,13 +1721,18 @@ class Export {
 		}
 
 		this.overridingMovePackageName = Utils.trimAdjustString(data.overridingMovePackageName, null, null, null, '');
+
 		this.hierarchyAdjustment = Utils.adjustEnumValue(data.withHierarchy, null, HierarchyAdjustment, false);
+		if (this.hierarchyAdjustment === null) {
+			this.hierarchyAdjustment = Utils.adjustEnumValue(defaultRules.hierarchyAdjustment, null, HierarchyAdjustment, false);
+		}
 		if (this.move && (this.hierarchyAdjustment !== null)) {
 			this.move.hierarchyAdjustment = this.hierarchyAdjustment;
 		}
 
-		var ifChanged: any = Utils.trimAdjustString(data.ifChanged, null, null, null, null);
-		ifChanged = ifChanged ? ifChanged.split(',') : ifChanged;
+		var ifChanged: any = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
+		ifChanged = (ifChanged || '').split(',');
+		ifChanged.push(includeRules.changeCheckers);
 		this.ifChanged = Utils.ensureArray(ifChanged, s => {
 			s = Utils.trimAdjustString(s, null, null, null, null);
 			if (!s) {
@@ -2010,10 +2019,28 @@ class BowerExportsPlugin {
 					return Utils.rejectedPromise<string>();
 				}
 
+				// Default & Include Rules
+				var defaultRules = b.defaultRules || {};
+				var includeRules = b.includeRules || {};
+
+				defaultRules.source = Utils.trimAdjustString(defaultRules.source, null, null, null, null);
+				defaultRules.filter = Utils.trimAdjustString(defaultRules.filter, null, null, null, null);
+				defaultRules.rename = Utils.trimAdjustString(defaultRules.rename, null, null, null, null);
+				defaultRules.replaceContent = Utils.trimAdjustString(defaultRules.replaceContent, null, null, null, null);
+				defaultRules.move = Utils.trimAdjustString(defaultRules.move, null, null, null, null);
+				defaultRules.hierarchyAdjustment = Utils.trimAdjustString(defaultRules.hierarchyAdjustment, null, null, null, null);
+				defaultRules.changeCheckers = Utils.trimAdjustString(defaultRules.changeCheckers, null, null, null, null);
+
+				includeRules.source = Utils.trimAdjustString(includeRules.source, null, null, null, null);
+				includeRules.filter = Utils.trimAdjustString(includeRules.filter, null, null, null, null);
+				includeRules.rename = Utils.trimAdjustString(includeRules.rename, null, null, null, null);
+				includeRules.replaceContent = Utils.trimAdjustString(includeRules.replaceContent, null, null, null, null);
+				includeRules.changeCheckers = Utils.trimAdjustString(includeRules.changeCheckers, null, null, null, null);
+
 				// Create Export Objects
 				this.exports = Utils.ensureArray(b.exports, x => {
 					if (!x) { return undefined; }
-					var xObj = new Export(this, x);
+					var xObj = new Export(this, x, defaultRules, includeRules);
 					return xObj.valid ? xObj : undefined;
 				});
 				if ((this.exports === null) || (this.exports.length === 0)) {

@@ -9,7 +9,6 @@ var Enumerable = require('linq');
 var string_decoder_1 = require('string_decoder');
 var multistream = require('multistream');
 var gChanged = require('gulp-changed');
-
 /**
  * Debug Flag
  */
@@ -1414,7 +1413,7 @@ var Export = (function () {
     /**
      * Constructor
      */
-    function Export(plugin, data) {
+    function Export(plugin, data, defaultRules, includeRules) {
         var _this = this;
         this.plugin = plugin;
         this.name = Utils.trimAdjustString(data.name, null, null, null, null);
@@ -1436,8 +1435,9 @@ var Export = (function () {
                 .where(function (p) { return Utils.testRegExp(regex, p); })
                 .toArray();
         }) || []).distinct().toArray();
-        var source = Utils.trimAdjustString(data.select, null, null, null, null);
-        source = source ? source.split(',') : source;
+        var source = Utils.trimAdjustString(data.select, defaultRules.source, defaultRules.source, defaultRules.source, '');
+        source = (source || '').split(',');
+        source.push(includeRules.source);
         var sourceRules = Utils.ensureArray(source, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1479,8 +1479,9 @@ var Export = (function () {
             this._isValid = false;
             this.source = null;
         }
-        var filter = Utils.trimAdjustString(data.filter, null, null, null, null);
-        filter = filter ? filter.split(',') : filter;
+        var filter = Utils.trimAdjustString(data.filter, defaultRules.filter, defaultRules.filter, defaultRules.filter, '');
+        filter = (filter || '').split(',');
+        filter.push(includeRules.filter);
         this.filter = Utils.ensureArray(filter, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1501,8 +1502,9 @@ var Export = (function () {
             }
             return rule;
         }) || [];
-        var rename = Utils.trimAdjustString(data.rename, null, null, null, null);
-        rename = rename ? rename.split(',') : rename;
+        var rename = Utils.trimAdjustString(data.rename, defaultRules.rename, defaultRules.rename, defaultRules.rename, '');
+        rename = (rename || '').split(',');
+        rename.push(includeRules.rename);
         this.rename = Utils.ensureArray(rename, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1523,8 +1525,9 @@ var Export = (function () {
             }
             return rule;
         }) || [];
-        var replaceContent = Utils.trimAdjustString(data.replaceContent, null, null, null, null);
-        replaceContent = replaceContent ? replaceContent.split(',') : replaceContent;
+        var replaceContent = Utils.trimAdjustString(data.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, defaultRules.replaceContent, '');
+        replaceContent = (replaceContent || '').split(',');
+        replaceContent.push(includeRules.replaceContent);
         this.replaceContent = Utils.ensureArray(replaceContent, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1546,7 +1549,7 @@ var Export = (function () {
             return rule;
         }) || [];
         this.move = null;
-        var move = Utils.trimAdjustString(data.move, null, null, null, null);
+        var move = Utils.trimAdjustString(data.move, defaultRules.move, defaultRules.move, defaultRules.move, null);
         if (move) {
             if (move.indexOf('#') === 0) {
                 this.move = plugin.resolveRule(move.substr(1), RuleType.Move);
@@ -1566,11 +1569,15 @@ var Export = (function () {
         }
         this.overridingMovePackageName = Utils.trimAdjustString(data.overridingMovePackageName, null, null, null, '');
         this.hierarchyAdjustment = Utils.adjustEnumValue(data.withHierarchy, null, HierarchyAdjustment, false);
+        if (this.hierarchyAdjustment === null) {
+            this.hierarchyAdjustment = Utils.adjustEnumValue(defaultRules.hierarchyAdjustment, null, HierarchyAdjustment, false);
+        }
         if (this.move && (this.hierarchyAdjustment !== null)) {
             this.move.hierarchyAdjustment = this.hierarchyAdjustment;
         }
-        var ifChanged = Utils.trimAdjustString(data.ifChanged, null, null, null, null);
-        ifChanged = ifChanged ? ifChanged.split(',') : ifChanged;
+        var ifChanged = Utils.trimAdjustString(data.ifChanged, defaultRules.changeCheckers, defaultRules.changeCheckers, defaultRules.changeCheckers, null);
+        ifChanged = (ifChanged || '').split(',');
+        ifChanged.push(includeRules.changeCheckers);
         this.ifChanged = Utils.ensureArray(ifChanged, function (s) {
             s = Utils.trimAdjustString(s, null, null, null, null);
             if (!s) {
@@ -1814,12 +1821,27 @@ var BowerExportsPlugin = (function () {
             if (duplicatesFound) {
                 return Utils.rejectedPromise();
             }
+            // Default & Include Rules
+            var defaultRules = b.defaultRules || {};
+            var includeRules = b.includeRules || {};
+            defaultRules.source = Utils.trimAdjustString(defaultRules.source, null, null, null, null);
+            defaultRules.filter = Utils.trimAdjustString(defaultRules.filter, null, null, null, null);
+            defaultRules.rename = Utils.trimAdjustString(defaultRules.rename, null, null, null, null);
+            defaultRules.replaceContent = Utils.trimAdjustString(defaultRules.replaceContent, null, null, null, null);
+            defaultRules.move = Utils.trimAdjustString(defaultRules.move, null, null, null, null);
+            defaultRules.hierarchyAdjustment = Utils.trimAdjustString(defaultRules.hierarchyAdjustment, null, null, null, null);
+            defaultRules.changeCheckers = Utils.trimAdjustString(defaultRules.changeCheckers, null, null, null, null);
+            includeRules.source = Utils.trimAdjustString(includeRules.source, null, null, null, null);
+            includeRules.filter = Utils.trimAdjustString(includeRules.filter, null, null, null, null);
+            includeRules.rename = Utils.trimAdjustString(includeRules.rename, null, null, null, null);
+            includeRules.replaceContent = Utils.trimAdjustString(includeRules.replaceContent, null, null, null, null);
+            includeRules.changeCheckers = Utils.trimAdjustString(includeRules.changeCheckers, null, null, null, null);
             // Create Export Objects
             _this.exports = Utils.ensureArray(b.exports, function (x) {
                 if (!x) {
                     return undefined;
                 }
-                var xObj = new Export(_this, x);
+                var xObj = new Export(_this, x, defaultRules, includeRules);
                 return xObj.valid ? xObj : undefined;
             });
             if ((_this.exports === null) || (_this.exports.length === 0)) {

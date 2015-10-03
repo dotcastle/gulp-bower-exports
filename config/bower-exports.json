@@ -1,45 +1,79 @@
 ﻿{
-	"$schema":  "../config/bower-exports-schema.json",
+	"$schema":  "bower-exports-schema.json",
 	"rules": [
 		{ "type": "source", "id": "mainSources", "src": "#main#" },
 		{ "type": "source", "id": "invalidSources", "src": "!**/*.min.js, !**/*.min.css, !**/*.map, !**/*.txt, !**/*.md, !**/*.json" },
 
+		{ "type": "filter", "id": "jsFilter", "extnameLike": "/\\.js$/gi" },
+		{ "type": "filter", "id": "cssFilter", "extnameLike": "/\\.css$/gi" },
+		{ "type": "filter", "id": "scssFilter", "extnameLike": "/\\.scss$/gi" },
+		{ "type": "filter", "id": "jsCssFilter", "extnameLike": "/\\.((js)|(css))$/gi" },
+
+		{ "type": "rename", "id": "dotToDashJsCss", "if": "#jsCssFilter", "replace": "/([^\\d])\\.([^\\d])/gi", "in": "basename", "with": "$1-$2" },
+		{ "type": "rename", "id": "scssPrefixUnderscore", "if": "#scssFilter", "replace": "/^([^_])/gi", "in": "basename", "with": "_$1" },
+		{ "type": "rename", "id": "removeDevInBasename", "if": "#jsFilter", "replace": "/\\.dev/gi", "in": "basename", "with": "" },
+
 		{ "type": "move", "id": "js", "withHierarchy": "minimized", "to": "js/#package#" },
+		{ "type": "move", "id": "jsFlat", "withHierarchy": "minimized", "to": "js" },
+		{ "type": "move", "id": "css", "withHierarchy": "flattened", "to": "css" },
 		{ "type": "move", "id": "fonts", "withHierarchy": "minimized", "to": "fonts/#package#" },
 		{ "type": "move", "id": "img", "withHierarchy": "minimized", "to": "img/#package#" },
-		{ "type": "move", "id": "scss", "withHierarchy": "minimized", "to": "scss/lib/#package#" },
+		{ "type": "move", "id": "scss", "withHierarchy": "minimized", "to": "../scss/lib/#package#" },
 
 		{ "type": "checkChanges", "id": "change" }
 	],
+
+	"defaultRules": {
+		"source": "#mainSources",
+		"changeCheckers": "#change"
+	},
+
+	"includeRules": {
+		"source": "#invalidSources",
+		"rename": "#dotToDashJsCss, #scssPrefixUnderscore"
+	},
+
 	"exports": [
-		{
-			"from": "angular, /^angular-(?!latest)[^\\-]*$/gi", "select": "#mainSources, #invalidSources",
-			"move": "#js", "overridingMovePackageName": "angular", "ifChanged": "#change"
-		},
-		{
-			"from": "angular-latest", "select": "src/ngLocale/*.js, #invalidSources",
-			"move": "js/#package#/i18n", "withHierarchy": "flattened", "overridingMovePackageName": "angular",
-			"ifChanged": "#change"
-		},
-		{
-			"from": "angular-ui-router", "select": "#mainSources, #invalidSources",
-			"move": "#js", "overridingMovePackageName": "angular-ui", "ifChanged": "#change"
-		},
-		{
-			"from": "bootstrap-sass", "select": "assets/javascripts/bootstrap.js, #invalidSources",
-			"move": "#js", "overridingMovePackageName": "", "ifChanged": "#change"
-		},
-		{
-			"from": "bootstrap-sass", "select": "assets/fonts/**/*.*, #invalidSources",
-			"move": "#fonts", "overridingMovePackageName": "bootstrap", "ifChanged": "#change"
-		},
-		{
-			"from": "bootstrap-sass", "select": "assets/images/**/*.*, #invalidSources",
-			"move": "#img", "overridingMovePackageName": "bootstrap", "ifChanged": "#change"
-		},
-		{
-			"from": "bootstrap-sass", "select": "assets/stylesheets/**/*.scss, !**/*mincer.scss, !**/*sprockets.scss, #invalidSources",
-			"move": "#scss", "overridingMovePackageName": "", "ifChanged": "#change"
-		}
+		{ "from": "autosize, canvg, es6-promise, hammer.js, js-base64, json2-js, jsSHA, masonry, pace, raphael, spin.js, webcomponents.js", "move": "#jsFlat" },
+		{ "from": "animate-css", "move": "#css" },
+
+		{ "from": "angular, /^angular-(?!latest)[^\\-]*$/gi", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-latest", "select": "src/ngLocale/*.js",
+		  "move": "js/#package#/i18n", "withHierarchy": "flattened", "overridingMovePackageName": "angular" },
+		{ "from": "angular-ui-router", "move": "#js", "overridingMovePackageName": "angular-ui" },
+		{ "from": "bootstrap-sass", "select": "assets/javascripts/bootstrap.js", "move": "#js", "overridingMovePackageName": "" },
+		{ "from": "bootstrap-sass", "select": "assets/fonts/**/*.*", "move": "#fonts", "overridingMovePackageName": "bootstrap" },
+		{ "from": "bootstrap-sass", "select": "assets/images/**/*.*", "move": "#img", "overridingMovePackageName": "bootstrap" },
+		{ "from": "bootstrap-sass", "select": "assets/stylesheets/**/*.scss, !**/*mincer.scss, !**/*sprockets.scss",
+		  "move": "#scss", "overridingMovePackageName": "" },
+		{ "from": "error-stack-parser, stackframe, stacktrace, stacktrace-gps", "move": "#js", "overridingMovePackageName": "stacktrace" },
+		{ "from": "fancyBox", "select": "source/jquery.fancybox.js", "move": "#js", "overridingMovePackageName": "jquery" },
+		{ "from": "fancyBox", "select": "source/*.{gif,png}", "move": "#img" },
+		{ "from": "font-awesome", "select": "scss/*.*", "move": "#scss" },
+		{ "from": "fullcalendar", "select": "dist/*.js", "move": "#js" },
+		{ "from": "fullcalendar", "select": "dist/*.css", "move": "#css" },
+		{ "from": "gsap", "select": "src/uncompressed/*Max.js, src/uncompressed/jquery*.js", "move": "#js" },
+		{ "from": "imagesloaded", "select": "*.pkgd.js", "move": "#jsFlat" },
+		{ "from": "isotope", "select": "dist/*.pkgd.js", "move": "#jsFlat" },
+		{ "from": "jquery", "move": "#js" },
+		{ "from": "carouFredSel, jquery.appear.js, jquery-cookie, jquery-knob, jquery-mousewheel, jquery-placeholder, jquery-sparkline, jstorage, noty, signalr", "move": "#js", "overridingMovePackageName": "jquery" },
+		{ "from": "jquery-easing-original", "select": "jquery.easing.js", "move": "#js", "overridingMovePackageName": "jquery" },
+		{ "from": "jquery-selectBox", "select": "*.js", "move": "#js", "overridingMovePackageName": "jquery" },
+		{ "from": "jquery-selectBox", "select": "*.{gif,png}", "move": "#img", "overridingMovePackageName": "selectBox" },
+		{ "from": "jquery-tubular", "select": "src/js/*.js", "move": "#js", "overridingMovePackageName": "jquery" },
+		{ "from": "jstz", "select": "*.js", "move": "#jsFlat" },
+		{ "from": "ladda", "select": "js/ladda*.js", "move": "#js" },
+		{ "from": "ladda", "select": "css/*.scss", "move": "#scss" },
+		{ "from": "ladda", "select": "source/*.{gif,png}", "move": "#img" },
+		{ "from": "moment", "select": "min/moment-with-locales.js", "move": "#js" },
+		{ "from": "moment-timezone", "select": "moment-timezone-utils.js, builds/moment-timezone-with-data.js", "move": "#js", "withHierarchy": "flattened", "overridingMovePackageName": "moment"  },
+		{ "from": "morrisjs", "select": "morris.js", "move": "#jsFlat" },
+		{ "from": "overthrow", "select": "src/*.js", "move": "#js" },
+		{ "from": "select2", "select": "dist/js/**/*.js, !**/select2.js", "move": "#js" },
+		{ "from": "select2", "select": "src/scss/**/*.scss", "move": "#scss" },
+		{ "from": "urijs", "select": "src/*.js", "move": "#js", "overridingMovePackageName": "uri" },
+		{ "from": "videojs", "select": "dist/video-js/*.dev.js, dist/video-js/**/lang/*.js", "rename": "#removeDevInBasename", "move": "#js" },
+		{ "from": "videojs", "select": "dist/video-js/font/**/*.*", "move": "#fonts" },
+		{ "from": "videojs", "select": "dist/video-js/*.swf", "move": "#img" }
 	]
 }

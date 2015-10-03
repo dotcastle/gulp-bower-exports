@@ -25,8 +25,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "test", "..\test\test.xproj"
 		{F1052829-95D2-4895-9BC7-2F03E0897DC0} = {F1052829-95D2-4895-9BC7-2F03E0897DC0}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "npm", "npm", "{A2B12CE4-77EF-45CE-8A5B-D5B86E2EFA8B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +45,5 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{713DD3EB-7E0E-42A9-BF7E-346DEFD1C5F7} = {C7753595-FCC8-4B51-AE33-BB7EB982FC35}
-		{A2B12CE4-77EF-45CE-8A5B-D5B86E2EFA8B} = {C7753595-FCC8-4B51-AE33-BB7EB982FC35}
 	EndGlobalSection
 EndGlobal

@@ -69,7 +69,7 @@
     <TypeScriptCompile Include="ts\lib\logger.ts" />
     <TypeScriptCompile Include="ts\lib\types\move-rule-data.ts" />
     <TypeScriptCompile Include="ts\lib\rules\move-rule.ts" />
-    <TypeScriptCompile Include="ts\lib\plugin-options.ts" />
+    <TypeScriptCompile Include="ts\plugin-options.ts" />
     <TypeScriptCompile Include="ts\lib\types\rename-rule-data.ts" />
     <TypeScriptCompile Include="ts\lib\rules\rename-rule.ts" />
     <TypeScriptCompile Include="ts\lib\types\replace-content-rule-data.ts" />

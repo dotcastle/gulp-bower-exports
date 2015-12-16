@@ -219,7 +219,7 @@ ModelManifest.xml
 /vs/plugin/bin/**/*.*
 /vs/plugin/**/*.js
 /vs/plugin/**/*.dat
-/vs/test/node_modules/**/*.*
 /vs/test/wwwroot/**/*.*
-/vs/test_bower_components
+/vs/test/node_modules/**/*.*
+/vs/test_bower_components/**/*.*
 

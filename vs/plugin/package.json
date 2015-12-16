@@ -1,6 +1,6 @@
 {
 	"name": "gulp-bower-exports",
-	"version": "1.0.0",
+	"version": "0.0.5",
 	"description": "Gulp plugin to export files from the bower components to a usable area (for e.g. wwwroot) based on some rules similar to grunt-bower-task",
 	"main": "index.js",
 	"author": {

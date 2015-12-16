@@ -17,7 +17,6 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 	- Rename rule - Rename parts of the file name (same as gulp-rename)
 	- Replace Content rule - Replace file contents with regex search/replace
 	- Move - Specify target locations to move the files
-	- Check Changes - Filter out unchanged files (gulp-changed)
 3. Export tasks composed using the inline or defined rules
 4. JSON schema to help in editing the export configuration file
 
@@ -26,58 +25,34 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 
 ## Usage ##
     var gulp = require('gulp');
-    var bowerExports = require("gulp-bower-exports");
+    var bowerExports = require('gulp-bower-exports');
 
     gulp.task('default', function () {
 	    return gulp.src('bower.json')
-    		.pipe(bowerExports({ externalExportsJsonFilePath: 'bower-exports.json', checkChangesDestination: 'wwwroot' }))
+    		.pipe(bowerExports({ exportsJsonFilePath: 'bower-exports.json' }))
     		.pipe(gulp.dest('wwwroot'));
     });
 
 ## API ##
 ### bowerExports(options) ###
 
-#### options.cwd ####
-**Type**: string  
-**Required**: false  
-**Default**: process.cwd()  
-**Description**: Working directory  
-
-#### options.externalExportsJsonFilePath ####
+#### options.exportsJsonFilePath ####
 **Type**: string  
 **Required**: false  
 **Default**: null  
 **Description**: External json file containing the exports section. If not specified, the exports section is expected to be present in the bower.json file with the property name "bowerExports"
 
-#### options.bowerRcFilePath ####
-**Type**: string  
-**Required**: false  
-**Default**: <bower.json directory>/.bowerrc  
-**Description**: Path of the .bowerrc file relative to the bower.json file
-
-#### options.bowerComponentsDirectory ####
-**Type**: string  
-**Required**: false  
-**Default**: <bower.json directory>/bower_components  
-**Description**: Path of the bower_components folder relative to the source file. This setting takes precedence over bowerRcFilePath.
-
-#### options.passThroughSourceFiles ####
+#### options.emitBowerJsonFile ####
 **Type**: boolean  
 **Required**: false  
 **Default**: false  
-**Description**: Whether to remove the bower.json file itself from the processing pipe upon successful processing of its contents and adding them to the pipeline
+**Description**: Whether to emit the bower.json file through the pipeline to the output
 
-#### options.nonReadableStreamedFiles ####
-**Type**: boolean  
+#### options.logLevel ####
+**Type**: number | string  
 **Required**: false  
-**Default**: false  
-**Description**: Specify this flag to open the source files as non-readable. This option is directly passed to the gulp src method as option 'read'
-
-#### options.checkChangesDestination ####
-**Type**: string  
-**Required**: false  
-**Default**: null  
-**Description**: The destination directory for gulp-changed. Same as you put into gulp.dest(). If not specified, change checking is not enabled.
+**Default**: 1 | 'Information'  
+**Description**: Minimum log level to emit during the build process (0 => Debug, 1 => Information, 2 => Warning, 3 => Success, 4 => Error)
 
 ## License ##
 MIT © [DotCastle TechnoSolutions Private Limited, INDIA](http://www.dotcastle.com "DotCastle TechnoSolutions Private Limited, INDIA")

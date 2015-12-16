@@ -213,8 +213,13 @@ ModelManifest.xml
 
 # Custom Ignores
 *.map
-*.js
 *.lock.json
-/vs/test
-/bower_components
-/test/wwwroot/**/*.*
+/vs/plugin/.vs/**/*.*
+/vs/plugin/obj/**/*.*
+/vs/plugin/bin/**/*.*
+/vs/plugin/**/*.js
+/vs/plugin/**/*.dat
+/vs/test/node_modules/**/*.*
+/vs/test/wwwroot/**/*.*
+/vs/test_bower_components
+

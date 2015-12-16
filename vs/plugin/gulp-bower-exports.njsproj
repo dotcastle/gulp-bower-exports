@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>gulp-bower-exports</Name>
+    <RootNamespace>gulp-bower-exports</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>31c96b0b-4425-4185-a222-5385ba39722b</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <StartWebBrowser>True</StartWebBrowser>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <ProjectView>ProjectFiles</ProjectView>
+    <NodejsPort>1337</NodejsPort>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <EnableTypeScript>true</EnableTypeScript>
+    <StartWebBrowser>true</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="bower-exports-schema.json" />
+    <Content Include="delete-empty.bat" />
+    <Content Include="post-build.bat" />
+    <Content Include="pre-build.bat" />
+    <TypeScriptCompile Include="scripts\typings\chalk\chalk.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\gulp-util\gulp-util.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\linq\linq.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\node\node.d.ts" />
+    <Content Include="package.json" />
+    <TypeScriptCompile Include="scripts\typings\q\Q.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\through2\through2.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\vinyl-fs\vinyl-fs.d.ts" />
+    <TypeScriptCompile Include="scripts\typings\vinyl\vinyl.d.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\replace-content-rule.ts" />
+    <TypeScriptCompile Include="ts\lib\types\bower-exports-data.ts" />
+    <TypeScriptCompile Include="ts\lib\types\bower-json-data.ts" />
+    <TypeScriptCompile Include="ts\lib\types\bowerrc-data.ts" />
+    <TypeScriptCompile Include="ts\lib\constants.ts" />
+    <TypeScriptCompile Include="ts\lib\types\context-tuple.ts" />
+    <TypeScriptCompile Include="ts\lib\types\default-rules-data.ts" />
+    <TypeScriptCompile Include="ts\lib\execution-context.ts" />
+    <TypeScriptCompile Include="ts\lib\types\export-data.ts" />
+    <TypeScriptCompile Include="ts\lib\export.ts" />
+    <TypeScriptCompile Include="ts\lib\types\file-info.ts" />
+    <TypeScriptCompile Include="ts\lib\types\file-name-part.ts" />
+    <TypeScriptCompile Include="ts\lib\types\filter-rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\filter-rule.ts" />
+    <TypeScriptCompile Include="ts\lib\types\hierarchy-adjustment.ts" />
+    <TypeScriptCompile Include="ts\lib\types\include-rules-data.ts" />
+    <TypeScriptCompile Include="ts\lib\types\key-value-pair.ts" />
+    <TypeScriptCompile Include="ts\lib\types\log-type.ts" />
+    <TypeScriptCompile Include="ts\lib\logger.ts" />
+    <TypeScriptCompile Include="ts\lib\types\move-rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\move-rule.ts" />
+    <TypeScriptCompile Include="ts\lib\plugin-options.ts" />
+    <TypeScriptCompile Include="ts\lib\types\rename-rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\rename-rule.ts" />
+    <TypeScriptCompile Include="ts\lib\types\replace-content-rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\types\rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\types\rule-type.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\rule.ts" />
+    <TypeScriptCompile Include="ts\lib\types\source-rule-data.ts" />
+    <TypeScriptCompile Include="ts\lib\rules\source-rule.ts" />
+    <TypeScriptCompile Include="ts\lib\transform-context.ts" />
+    <TypeScriptCompile Include="ts\lib\types\stream-creation-data.ts" />
+    <TypeScriptCompile Include="ts\lib\utils.ts" />
+    <TypeScriptCompile Include="ts\plugin.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="scripts\typings\chalk\" />
+    <Folder Include="scripts\typings\gulp-util\" />
+    <Folder Include="scripts\typings\linq\" />
+    <Folder Include="scripts\typings\q\" />
+    <Folder Include="scripts\typings\through2\" />
+    <Folder Include="scripts\typings\vinyl-fs\" />
+    <Folder Include="scripts\typings\vinyl\" />
+    <Folder Include="ts\" />
+    <Folder Include="scripts\" />
+    <Folder Include="scripts\typings\" />
+    <Folder Include="scripts\typings\node\" />
+    <Folder Include="ts\lib\" />
+    <Folder Include="ts\lib\rules\" />
+    <Folder Include="ts\lib\types\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>@echo off
+call pre-build.bat $(ConfigurationName)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>@echo off
+call post-build.bat $(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile>
+    </TypeScriptOutFile>
+    <TypeScriptOutDir>../..</TypeScriptOutDir>
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile>
+    </TypeScriptOutFile>
+    <TypeScriptOutDir>../..</TypeScriptOutDir>
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

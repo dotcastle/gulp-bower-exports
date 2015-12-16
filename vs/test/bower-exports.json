@@ -1,0 +1,89 @@
+﻿{
+	"$schema":  "bower-exports-schema.json",
+	"rules": [
+		{ "type": "source", "id": "mainSources", "src": "#main#" },
+		{ "type": "source", "id": "invalidSources", "src": "!**/*.min.js, !**/*.min.css, !**/*.map, !**/*.txt, !**/*.md, !**/*.json" },
+
+		{ "type": "filter", "id": "jsFilter", "extnameLike": "/\\.js$/gi" },
+		{ "type": "filter", "id": "cssFilter", "extnameLike": "/\\.css$/gi" },
+		{ "type": "filter", "id": "scssFilter", "extnameLike": "/\\.scss$/gi" },
+		{ "type": "filter", "id": "jsCssFilter", "extnameLike": "/\\.((js)|(css))$/gi" },
+
+		{ "type": "rename", "id": "dotToDashJsCss", "if": "#jsCssFilter", "replace": "/([^\\d])\\.([^\\d])/gi", "in": "basename", "with": "$1-$2" },
+		{ "type": "rename", "id": "scssPrefixUnderscore", "if": "#scssFilter", "replace": "/^([^_])/gi", "in": "basename", "with": "_$1" },
+		{ "type": "rename", "id": "removeDevInBasename", "if": "#jsFilter", "replace": "/\\.dev/gi", "in": "basename", "with": "" },
+
+		{ "type": "move", "id": "js", "withHierarchy": "minimized", "to": "js/#package#" },
+		{ "type": "move", "id": "jsFlat", "withHierarchy": "flattened", "to": "js/#package#" },
+		{ "type": "move", "id": "jsNoPkg", "withHierarchy": "minimized", "to": "js" },
+		{ "type": "move", "id": "jsFlatNoPkg", "withHierarchy": "flattened", "to": "js" },
+		{ "type": "move", "id": "css", "withHierarchy": "flattened", "to": "css" },
+		{ "type": "move", "id": "fonts", "withHierarchy": "minimized", "to": "fonts/#package#" },
+		{ "type": "move", "id": "img", "withHierarchy": "minimized", "to": "img/#package#" },
+		{ "type": "move", "id": "imgFlat", "withHierarchy": "minimized", "to": "img" },
+		{ "type": "move", "id": "scss", "withHierarchy": "minimized", "to": "../scss/vendor/#package#" },
+		{ "type": "move", "id": "scssFlat", "withHierarchy": "flattened", "to": "../scss/vendor/#package#" }
+	],
+
+	"defaultExportRules": {
+		"source": "#mainSources",
+		"changeCheckers": "#change"
+	},
+
+	"appendExportRules": {
+		"source": "#invalidSources",
+		"rename": "#dotToDashJsCss, #scssPrefixUnderscore"
+	},
+
+	"exports": [
+		{ "from": "angular", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular", "select": "*.css", "move": "#css" },
+		{ "from": "angular-animate", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-aria", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-chart.js", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-chart.js", "filter": "#cssFilter", "move": "#css" },
+		{ "from": "angular-cookies", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-digest-hud", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-dragula", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-dragula", "filter": "#cssFilter", "move": "#css" },
+		{ "from": "angular-google-chart", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-google-maps", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-highlightjs", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-linkify", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-local-storage", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-material", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-material", "filter": "#cssFilter", "move": "#css", "overridingMovePackageName": "angular" },
+		{ "from": "angular-material", "select": "*.scss", "move": "#scss" },
+		{ "from": "angular-material-data-table", "select": "dist/*.*", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-material-data-table", "select": "dist/*.*", "filter": "#cssFilter", "move": "#css", "overridingMovePackageName": "angular" },
+		{ "from": "angular-messages", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-moment", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-resource", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-sanitize", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-simple-logger", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-touch", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-translate", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-translate-loader-partial", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-translate-storage-cookie", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-translate-storage-local", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "angular-ui-router", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "animate.css-scss", "select": "**/*.scss", "move": "#scss", "overridingMovePackageName": "animate-css" },
+		{ "from": "Chart.js", "filter": "#jsFilter", "move": "#jsNoPkg" },
+		{ "from": "countUp.js", "select": "angular-countUp.js", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular" },
+		{ "from": "countUp.js", "select": "countUp.js", "filter": "#jsFilter", "move": "#jsNoPkg" },
+		{ "from": "font-awesome", "select": "fonts/*.*", "move": "#fonts" },
+		{ "from": "font-awesome", "select": "scss/*.*", "move": "#scss" },
+		{ "from": "fullcalendar", "select": "dist/*.js", "move": "#js" },
+		{ "from": "fullcalendar", "select": "dist/*.css", "move": "#css" },
+		{ "from": "jquery", "select": "dist/jquery.js", "move": "#jsNoPkg" },
+		{ "from": "lodash", "move": "#jsNoPkg" },
+		{ "from": "material-design-iconic-font", "select": "scss/*.*", "move": "#scss" },
+		{ "from": "material-design-iconic-font", "select": "dist/fonts/*.*", "move": "#fonts" },
+		{ "from": "moment", "select": "min/moment-with-locales.js", "move": "#js" },
+		{ "from": "moment-timezone", "select": "moment-timezone-utils.js, builds/moment-timezone-with-data.js", "move": "#js", "withHierarchy": "flattened", "overridingMovePackageName": "moment"  },
+		{ "from": "ng-file-upload", "select": "ng-file-upload-all.js, FileAPI.js, *.swf", "move": "#js", "overridingMovePackageName": "angular/ng-file-upload" },
+		{ "from": "rangy", "move": "#js" },
+		{ "from": "textAngular", "filter": "#jsFilter", "move": "#js", "overridingMovePackageName": "angular/text-angular" },
+		{ "from": "textAngular", "filter": "#cssFilter", "move": "#css" }
+	]
+}

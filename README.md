@@ -42,16 +42,10 @@ This plugin **gulp-bower-exports**, however provides a different approach to tra
 **Default**: null  
 **Description**: External json file containing the exports section. If not specified, the exports section is expected to be present in the bower.json file with the property name "bowerExports"
 
-#### options.emitBowerJsonFile ####
-**Type**: boolean  
-**Required**: false  
-**Default**: false  
-**Description**: Whether to emit the bower.json file through the pipeline to the output
-
 #### options.logLevel ####
 **Type**: number | string  
 **Required**: false  
-**Default**: 1 | 'Information'  
+**Default**: 2 | 'Warning'  
 **Description**: Minimum log level to emit during the build process (0 => Debug, 1 => Information, 2 => Warning, 3 => Success, 4 => Error)
 
 ## License ##

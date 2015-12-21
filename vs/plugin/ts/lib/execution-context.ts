@@ -1,5 +1,6 @@
 ﻿import stream = require('stream');
 import path = require('path');
+import fs = require('fs');
 import Q = require('q');
 import File = require('vinyl');
 var multistream = <Function>require('multistream');
@@ -72,10 +73,10 @@ class ExecutionContext {
 				Logger.log(LogType.Information, 'Analyzing bower.json contents...');
 
 				// Get all package names
-				this.packageNames = Enumerable.from(Utils.getProperties(bowerJson.dependencies))
-					.select((p: IKeyValuePair<string, any>) => { return Utils.trimAdjustString(p.key, null, null, null, null); })
-					.where((p: string) => !!p)
-					.toArray();
+				var bcDir = path.resolve(this.bowerComponentsDirectory);
+				this.packageNames = fs.readdirSync(bcDir).filter((file: string) => {
+					return (file !== '.') && (file !== '..') && fs.statSync(path.join(bcDir, file)).isDirectory();
+				});
 
 				// Reject if no package names
 				if (this.packageNames.length === 0) {
@@ -216,11 +217,6 @@ class ExecutionContext {
 			.then(() => {
 				// Log
 				Logger.log(LogType.Information, 'Beginning transformations...');
-
-				// Push the file & finish
-				if (this.options.emitBowerJsonFile) {
-					Utils.pushFiles(transform, [file]);
-				}
 
 				// Stream Export Streams
 				this._streamFactoryQueue = null;

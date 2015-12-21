@@ -23,7 +23,6 @@ class Plugin {
 		options = options || <IPluginOptions>{};
 		context.options = <IPluginOptions>{};
 		context.options.exportsJsonFilePath = Utils.trimAdjustString(options.exportsJsonFilePath, null, null, null, null);
-		context.options.emitBowerJsonFile = !!options.emitBowerJsonFile;
 		Constants.logLevel = Utils.adjustEnumValue(options.logLevel, Constants.logLevel, LogType, false);
 		context.options.logLevel = Constants.logLevel;
 

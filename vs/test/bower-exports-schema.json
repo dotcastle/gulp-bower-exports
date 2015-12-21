@@ -290,36 +290,13 @@
 			"required": ["type", "id", "to"]
 		},
 
-		"checkChangesRule": {
-			"type": "object",
-			"title": "Check Changes Rule",
-			"description": "Specifies criteria to check if the source files changed compared to the detination files. These options are passed to the gulp-changed plugin.",
-
-			"properties": {
-				"type": { "type": "string", "default": "move", "enum": ["checkChanges"] },
-				"id": { "$ref": "#/definitions/elementId" },
-				"extension": {
-					"$ref": "#/definitions/nonEmptyString",
-					"title": "Extension",
-					"description": "Extension of the destination files."
-				},
-
-				"hasChanged": {
-					"$ref": "#/definitions/nonEmptyString",
-					"title": "Has Changed",
-					"description": "Function that determines whether the source file is different from the destination file."
-				}
-			}
-		},
-
 		"rule": {
 			"anyOf": [
 				{ "$ref": "#/definitions/sourceRule" },
 				{ "$ref": "#/definitions/filterRule" },
 				{ "$ref": "#/definitions/renameRule" },
 				{ "$ref": "#/definitions/replaceContentRule" },
-				{ "$ref": "#/definitions/moveRule" },
-				{ "$ref": "#/definitions/checkChangesRule" }
+				{ "$ref": "#/definitions/moveRule" }
 			]
 		},
 
@@ -405,7 +382,7 @@
 			]
 		},
 
-		"defaultRules": {
+		"defaultExportRules": {
 			"type": "object",
 			"title": "Default Rules",
 			"description": "Rules to be applied when not specified in the exports",
@@ -448,7 +425,7 @@
 			}
 		},
 
-		"includeRules": {
+		"appendExportRules": {
 			"type": "object",
 			"title": "Include Rules",
 			"description": "Rules to be included to all exports",

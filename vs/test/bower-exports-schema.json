@@ -468,7 +468,7 @@
 					"type": "array",
 					"additionalItems": true,
 					"uniqueItems": true,
-					"minItems": 1,
+					"minItems": 0,
 					"items": { "$ref": "#/definitions/export" }
 				}
 			]

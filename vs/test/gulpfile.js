@@ -4,7 +4,7 @@ var bowerExports = require("gulp-bower-exports");
 
 gulp.task('default', function () {
 	return gulp.src('bower.json')
-		.pipe(bowerExports({ exportsJsonFilePath: 'bower-exports.json' }))
+		.pipe(bowerExports({ exportsJsonFilePath: 'bower-exports.json', logLevel: 'Debug' }))
 		.pipe(gulp.dest('wwwroot'));
 });
 

@@ -20,16 +20,21 @@ abstract class Logger {
 			return;
 		}
 
-		var allArgs: any[] = [];
+		var allArgs: any[] = [gUtil.colors.cyan(Constants.pluginName + ' - ')];
 		if (typeof (format) !== 'string') {
 			format = '';
 		}
 
 		// Detect type name prefix
-		var typeNamePrefix = LogType[logType].toUpperCase();
+		var typeNamePrefix = LogType[logType].toLowerCase();
 
 		// Color
 		switch (logType) {
+			case LogType.Debug:
+				{
+					allArgs.push(gUtil.colors.magenta(typeNamePrefix));
+					break;
+				}
 			case LogType.Information:
 				{
 					allArgs.push(gUtil.colors.blue(typeNamePrefix));
